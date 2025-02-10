@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .container-form {
+    border: 1px solid transparent;
+    border-radius: 20px;
+    background-color: #ffffff;
+    width: 600px;
+    height: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
