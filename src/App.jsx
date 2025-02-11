@@ -1,16 +1,21 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LayoutAdmin from "./components/Dashboard";
+import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import UserTable from "./components/table/UserTable";
 import SupplierTable from "./components/table/SupplierTable";
 import T_Table from "./components/table/Table";
 import IngredientTable from "./components/table/IngredientTable";
+import LayoutAdmin from "./components/Layout";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LayoutAdmin />,
     children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
       {
         path: "/customer",
         element: <UserTable />,
