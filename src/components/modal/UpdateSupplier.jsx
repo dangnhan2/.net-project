@@ -1,28 +1,44 @@
 import { Divider, Form, Input, Modal } from "antd";
-
-const AddCustomer = (props) => {
-  const { modalAdd, setModalAdd } = props;
+import { useEffect } from "react";
+const UpdateSupplier = (props) => {
+  const [form] = Form.useForm();
+  const { modalUpdate, setModalUpdate, dataRecord } = props;
+  console.log(dataRecord);
   const onFinish = (values) => {
     console.log("Success:", values);
   };
 
   const handleOk = () => {
-    setModalAdd(false);
+    setModalUpdate(false);
   };
 
   const handleCancel = () => {
-    setModalAdd(false);
+    setModalUpdate(false);
   };
+
+  useEffect(() => {
+    if (dataRecord) {
+      form.setFieldsValue({
+        id: dataRecord.id,
+        name: dataRecord.name,
+        phone: dataRecord.phone,
+        address: dataRecord.address,
+        representative: dataRecord.representative,
+      });
+    }
+  }, [dataRecord]);
+
   return (
     <Modal
-      title="New Customer"
-      open={modalAdd}
+      title="Update Customer"
+      open={modalUpdate}
       onOk={handleOk}
       onCancel={handleCancel}
       width={600}
     >
       <Divider></Divider>
       <Form
+        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -37,12 +53,26 @@ const AddCustomer = (props) => {
         autoComplete="off"
       >
         <Form.Item
-          label="Full name"
-          name="fullname"
+          hidden
+          label="Id"
+          name="id"
           rules={[
             {
               required: true,
               message: "Please input your phone fullname!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input  name of supplier!",
             },
           ]}
         >
@@ -74,9 +104,21 @@ const AddCustomer = (props) => {
         >
           <Input />
         </Form.Item>
+
+        <Form.Item
+          label="Representative"
+          name="representative"
+          rules={[
+            {
+              required: true,
+              message: "Please input your representative!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
       </Form>
     </Modal>
   );
 };
-
-export default AddCustomer;
+export default UpdateSupplier;

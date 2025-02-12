@@ -1,6 +1,5 @@
 import { Divider, Form, Input, Modal } from "antd";
-
-const AddCustomer = (props) => {
+const AddSupplier = (props) => {
   const { modalAdd, setModalAdd } = props;
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -15,7 +14,7 @@ const AddCustomer = (props) => {
   };
   return (
     <Modal
-      title="New Customer"
+      title="New Supplier"
       open={modalAdd}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -37,12 +36,12 @@ const AddCustomer = (props) => {
         autoComplete="off"
       >
         <Form.Item
-          label="Full name"
-          name="fullname"
+          label="Name"
+          name="name"
           rules={[
             {
               required: true,
-              message: "Please input your phone fullname!",
+              message: "Please input name of supplier!",
             },
           ]}
         >
@@ -74,9 +73,21 @@ const AddCustomer = (props) => {
         >
           <Input />
         </Form.Item>
+
+        <Form.Item
+          label="Representative"
+          name="representative"
+          rules={[
+            {
+              required: true,
+              message: "Please input your representative!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
       </Form>
     </Modal>
   );
 };
-
-export default AddCustomer;
+export default AddSupplier;
