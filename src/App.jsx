@@ -6,14 +6,15 @@ import SupplierTable from "./components/table/SupplierTable";
 import T_Table from "./components/table/Table";
 import IngredientTable from "./components/table/IngredientTable";
 import LayoutAdmin from "./components/Layout";
+import EmployeeTable from "./components/table/EmployeeTable";
+import DishTable from "./components/table/DishTable";
 
 const router = createBrowserRouter([
   {
-    path: "/",
     element: <LayoutAdmin />,
     children: [
       {
-        path: "/dashboard",
+        path: "/",
         element: <Dashboard />,
       },
       {
@@ -31,6 +32,14 @@ const router = createBrowserRouter([
       {
         path: "/supplier",
         element: <SupplierTable />,
+      },
+      {
+        path: "/dish",
+        element: <DishTable />,
+      },
+      {
+        path: "/employee",
+        element: <EmployeeTable />,
       },
     ],
   },

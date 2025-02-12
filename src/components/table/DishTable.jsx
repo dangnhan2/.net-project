@@ -1,20 +1,22 @@
-import { Button, Space, Table, Tag, Input } from "antd";
-import { FaPencilAlt, FaPlus } from "react-icons/fa";
+import { Button, Space, Table, Input } from "antd";
+import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { useState } from "react";
-import AddIngredient from "../modal/AddIngredient";
-import UpdateIngredient from "../modal/UpdateIngredient";
+import coffee1 from "../../img/coffee1.jpg";
+import beer from "../../img/beer.jpg";
+import tea from "../../img/tea.jpg";
+import AddDish from "../modal/AddDish";
+import UpdateDish from "../modal/UpdateDish";
 const { Search } = Input;
-const IngredientTable = () => {
+const DishTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
 
   const handleUpdate = (record) => {
-    // console.log(record);
+    console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
-
   const columns = [
     {
       title: "ID",
@@ -22,22 +24,28 @@ const IngredientTable = () => {
       key: "id",
     },
     {
-      title: "NAME",
-      dataIndex: "name",
-      key: "name",
+      title: "IMAGE",
+      dataIndex: "image",
+      render: (_, record) => (
+        <img
+          src={`${record.image}`}
+          alt={record.dish}
+          style={{ height: "10%", width: "15%" }}
+        />
+      ),
     },
     {
-      title: "QUANTITY",
-      dataIndex: "quantity",
-      key: "quantity",
+      title: "DISH",
+      dataIndex: "dish",
+      key: "dish",
     },
     {
-      title: "UNIT TYPE",
-      dataIndex: "type",
-      key: "type",
+      title: "CATEGORY",
+      dataIndex: "category",
+      key: "category",
     },
     {
-      title: "PRICE",
+      title: "Price",
       dataIndex: "price",
       key: "price",
     },
@@ -51,6 +59,9 @@ const IngredientTable = () => {
             <Button onClick={() => handleUpdate(record)}>
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
+            <Button>
+              <FaRegTrashAlt style={{ color: "#F38177" }} />
+            </Button>
           </div>
         </>
       ),
@@ -59,30 +70,23 @@ const IngredientTable = () => {
   const data = [
     {
       id: "01",
-      name: "Sugar",
-      quantity: "10",
-      type: "kg",
+      image: coffee1,
+      dish: "Detox",
+      category: "Coffee",
       price: "$1",
     },
     {
       id: "02",
-      name: "Salt",
-      quantity: "10",
-      type: "kg",
+      image: tea,
+      dish: "Green Tea",
+      category: "Tea",
       price: "$1.5",
     },
     {
       id: "03",
-      name: "Powdered coffee",
-      quantity: "10",
-      type: "kg",
-      price: "$2.5",
-    },
-    {
-      id: "03",
-      name: "Ice cubes",
-      quantity: "10",
-      type: "kg",
+      image: beer,
+      dish: "Blue Berry",
+      category: "Beer",
       price: "$2",
     },
   ];
@@ -115,17 +119,13 @@ const IngredientTable = () => {
           position: ["bottomCenter"],
         }}
       />
-      <AddIngredient
-        modalAdd={modalAdd}
-        setModalAdd={setModalAdd}
-      ></AddIngredient>
-      <UpdateIngredient
+      <AddDish modalAdd={modalAdd} setModalAdd={setModalAdd}></AddDish>
+      <UpdateDish
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
-      ></UpdateIngredient>
+      ></UpdateDish>
     </>
   );
 };
-
-export default IngredientTable;
+export default DishTable;

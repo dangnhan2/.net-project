@@ -91,7 +91,7 @@ const LayoutAdmin = () => {
             {
               key: "5",
               icon: <UploadOutlined />,
-              label: <Link>Dish</Link>,
+              label: <Link to="/dish">Dish</Link>,
             },
 
             {
@@ -115,7 +115,7 @@ const LayoutAdmin = () => {
             {
               key: "9",
               icon: <UploadOutlined />,
-              label: <Link>Employee</Link>,
+              label: <Link to="/employee">Employee</Link>,
             },
 
             {
