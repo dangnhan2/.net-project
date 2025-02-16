@@ -8,6 +8,8 @@ import IngredientTable from "./components/table/IngredientTable";
 import LayoutAdmin from "./components/Layout";
 import EmployeeTable from "./components/table/EmployeeTable";
 import DishTable from "./components/table/DishTable";
+import OrderTable from "./components/table/OrderTable";
+import BillTable from "./components/table/BillTable";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +38,14 @@ const router = createBrowserRouter([
       {
         path: "/dish",
         element: <DishTable />,
+      },
+      {
+        path: "/order",
+        element: <OrderTable />,
+      },
+      {
+        path: "/bill",
+        element: <BillTable />,
       },
       {
         path: "/employee",

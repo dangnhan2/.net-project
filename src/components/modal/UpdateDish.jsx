@@ -1,4 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
+import { v4 as uuidv4 } from "uuid";
 import {
   Col,
   Divider,
@@ -15,15 +16,9 @@ import { useEffect, useState } from "react";
 const UpdateDish = (props) => {
   const [form] = Form.useForm();
   const { modalUpdate, setModalUpdate, dataRecord } = props;
-  const [fileList, setFileList] = useState([
-    // {
-    //   uid: "-1",
-    //   name: "image.png",
-    //   status: "done",
-    //   url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    // },
-  ]);
+  const [fileList, setFileList] = useState([]);
   console.log(dataRecord);
+  console.log(fileList);
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -39,22 +34,22 @@ const UpdateDish = (props) => {
 
   useEffect(() => {
     const thumbnail = {
-      uid: "1",
-      name: dataRecord.dish,
+      uid: uuidv4(),
+      name: dataRecord?.dish,
       status: "done",
-      url: dataRecord.image,
+      url: dataRecord?.image,
     };
 
-    setFileList([thumbnail]);
     if (dataRecord) {
       form.setFieldsValue({
-        image: fileList,
+        image: thumbnail,
         id: dataRecord.id,
         dish: dataRecord.dish,
         price: dataRecord.price,
         category: dataRecord.category,
       });
     }
+    setFileList([thumbnail]);
   }, [dataRecord]);
 
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -91,7 +86,7 @@ const UpdateDish = (props) => {
   );
   return (
     <Modal
-      title="New Employee"
+      title="Update Dish"
       open={modalUpdate}
       onOk={handleOk}
       onCancel={handleCancel}

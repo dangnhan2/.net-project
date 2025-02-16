@@ -10,7 +10,13 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-
+import { FaTableCells } from "react-icons/fa6";
+import { GiKnifeFork, GiThreeLeaves } from "react-icons/gi";
+import { BiFoodMenu } from "react-icons/bi";
+import { GoListOrdered } from "react-icons/go";
+import { FaMoneyBillAlt } from "react-icons/fa";
+import { MdDashboard, MdOutlineGroups2 } from "react-icons/md";
+import { SlCalender } from "react-icons/sl";
 const items = [
   {
     label: (
@@ -63,7 +69,7 @@ const LayoutAdmin = () => {
           items={[
             {
               key: "0",
-              icon: <UserOutlined />,
+              icon: <MdDashboard />,
               label: <Link to="/">Dashboard</Link>,
             },
             {
@@ -78,49 +84,49 @@ const LayoutAdmin = () => {
             },
             {
               key: "3",
-              icon: <UploadOutlined />,
+              icon: <FaTableCells />,
               label: <Link to="/table">Table</Link>,
             },
 
             {
               key: "4",
-              icon: <UploadOutlined />,
+              icon: <GiThreeLeaves />,
               label: <Link to="/ingredients">Ingredient</Link>,
             },
 
             {
               key: "5",
-              icon: <UploadOutlined />,
+              icon: <GiKnifeFork />,
               label: <Link to="/dish">Dish</Link>,
             },
 
             {
               key: "6",
-              icon: <UploadOutlined />,
+              icon: <BiFoodMenu />,
               label: <Link>Menu</Link>,
             },
 
             {
               key: "7",
-              icon: <UploadOutlined />,
-              label: <Link>Order</Link>,
+              icon: <GoListOrdered />,
+              label: <Link to="/order">Order</Link>,
             },
 
             {
               key: "8",
-              icon: <UploadOutlined />,
-              label: <Link>Bill</Link>,
+              icon: <FaMoneyBillAlt />,
+              label: <Link to="/bill">Bill</Link>,
             },
 
             {
               key: "9",
-              icon: <UploadOutlined />,
+              icon: <MdOutlineGroups2 />,
               label: <Link to="/employee">Employee</Link>,
             },
 
             {
               key: "10",
-              icon: <UploadOutlined />,
+              icon: <SlCalender />,
               label: <Link>Shift</Link>,
             },
           ]}
