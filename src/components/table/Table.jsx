@@ -63,9 +63,14 @@ const T_Table = () => {
                 key={tag}
                 style={{
                   fontWeight: "bold",
+                  width: "80px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
                 }}
               >
-                {tag.toUpperCase()}
+                {tag}
               </Tag>
             );
           })}
@@ -130,12 +135,12 @@ const T_Table = () => {
           alignItems: "center",
         }}
       >
-        <h2>Supplier</h2>
+        <h2>Table</h2>
         <div>
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );

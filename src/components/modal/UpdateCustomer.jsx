@@ -1,4 +1,4 @@
-import { Divider, Form, Input, Modal } from "antd";
+import { Divider, Form, Input, Select, Button, Modal } from "antd";
 import { useEffect } from "react";
 
 const UpdateCustomer = (props) => {
@@ -7,10 +7,6 @@ const UpdateCustomer = (props) => {
   console.log(dataRecord);
   const onFinish = (values) => {
     console.log("Success:", values);
-  };
-
-  const handleOk = () => {
-    setModalUpdate(false);
   };
 
   const handleCancel = () => {
@@ -29,67 +25,79 @@ const UpdateCustomer = (props) => {
 
   return (
     <Modal
-      title="Update Customer"
+      title="Edit Customer"
       open={modalUpdate}
-      onOk={handleOk}
       onCancel={handleCancel}
+      footer={null}
       width={600}
     >
       <Divider></Divider>
       <Form
-        form={form}
-        name="basic"
-        labelCol={{
-          span: 24,
-        }}
-        wrapperCol={{
-          span: 24,
-        }}
-        initialValues={{
-          remember: true,
-        }}
+        name="customerForm"
+        layout="vertical"
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Form.Item
-          hidden
-          label="Id"
-          name="id"
-          rules={[
-            {
-              required: true,
-              message: "Please input your phone fullname!",
-            },
-          ]}
-        >
-          <Input />
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Full Name"
+            name="fullname"
+            rules={[{ required: true, message: "Please enter full name!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Phone Number"
+            name="phone"
+            rules={[{ required: true, message: "Please enter phone number!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input />
+          </Form.Item>
+        </div>
+
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[{ required: true, message: "Please enter address!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input />
+          </Form.Item>
+        </div>
+
+        <Form.Item label="Gender" name="gender" rules={[{ required: true, message: "Please choose gender!" }]}>
+          <Select placeholder="Choose gender">
+            <Select.Option value="male">Male</Select.Option>
+            <Select.Option value="female">Female</Select.Option>
+            <Select.Option value="other">Other</Select.Option>
+          </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Phone"
-          name="phone"
-          rules={[
-            {
-              required: true,
-              message: "Please input your phone number!",
-            },
-          ]}
-        >
-          <Input />
+        <Form.Item label="Note" name="note">
+          <Input.TextArea />
         </Form.Item>
 
-        <Form.Item
-          label="Address"
-          name="address"
-          rules={[
-            {
-              required: true,
-              message: "Please input your address!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Confirm
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

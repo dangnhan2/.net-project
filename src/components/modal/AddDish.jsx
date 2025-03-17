@@ -10,6 +10,7 @@ import {
   Row,
   Select,
   Upload,
+  Button
 } from "antd";
 import { useState } from "react";
 
@@ -17,10 +18,6 @@ const AddDish = (props) => {
   const { modalAdd, setModalAdd } = props;
   const onFinish = (values) => {
     console.log("Success:", values);
-  };
-
-  const handleOk = () => {
-    setModalAdd(false);
   };
 
   const handleCancel = () => {
@@ -69,10 +66,10 @@ const AddDish = (props) => {
   );
   return (
     <Modal
-      title="New Employee"
+      title="Add New Dish"
       open={modalAdd}
-      onOk={handleOk}
       onCancel={handleCancel}
+      footer={null}
       width={700}
     >
       <Divider></Divider>
@@ -98,7 +95,7 @@ const AddDish = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your full name!",
+                  message: "Please choose an image!",
                 },
               ]}
             >
@@ -127,16 +124,16 @@ const AddDish = (props) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Dish"
-              name="dish"
+              label="Name"
+              name="name"
               rules={[
                 {
                   required: true,
-                  message: "Please input dish!",
+                  message: "Please enter dish's name!",
                 },
               ]}
             >
-              <Input placeholder="Enter dish" />
+              <Input placeholder="Enter name" />
             </Form.Item>
           </Col>
         </Row>
@@ -144,12 +141,12 @@ const AddDish = (props) => {
         <Row gutter={[20, 20]}>
           <Col span={12}>
             <Form.Item
-              label="Role"
-              name="role"
+              label="Price"
+              name="Price"
               rules={[
                 {
                   required: true,
-                  message: "Please input your address!",
+                  message: "Please enter dish's price!",
                 },
               ]}
             >
@@ -180,6 +177,17 @@ const AddDish = (props) => {
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item label="Note" name="note">
+          <Input.TextArea placeholder="Enter note: (e.g. VIP)" rows={4} />
+        </Form.Item>
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Confirm
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

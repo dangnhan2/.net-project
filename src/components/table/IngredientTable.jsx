@@ -22,22 +22,22 @@ const IngredientTable = () => {
       key: "id",
     },
     {
-      title: "NAME",
+      title: "Name",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "QUANTITY",
+      title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
     },
     {
-      title: "UNIT TYPE",
+      title: "Unit Type",
       dataIndex: "type",
       key: "type",
     },
     {
-      title: "PRICE",
+      title: "Price",
       dataIndex: "price",
       key: "price",
     },
@@ -100,7 +100,7 @@ const IngredientTable = () => {
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );

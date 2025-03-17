@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
-import UserTable from "./components/table/UserTable";
+import CustomerTable from "./components/table/CustomerTable";
 import SupplierTable from "./components/table/SupplierTable";
 import T_Table from "./components/table/Table";
 import IngredientTable from "./components/table/IngredientTable";
@@ -10,6 +10,7 @@ import EmployeeTable from "./components/table/EmployeeTable";
 import DishTable from "./components/table/DishTable";
 import OrderTable from "./components/table/OrderTable";
 import BillTable from "./components/table/BillTable";
+import MenuTable from "./components/table/MenuTable";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/customer",
-        element: <UserTable />,
+        element: <CustomerTable />,
       },
       {
         path: "/ingredients",
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/dish",
         element: <DishTable />,
+      },
+      {
+        path: "/menu",
+        element: <MenuTable />,
       },
       {
         path: "/order",

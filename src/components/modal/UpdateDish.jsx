@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Upload,
+  Button
 } from "antd";
 import { useEffect, useState } from "react";
 const UpdateDish = (props) => {
@@ -22,10 +23,6 @@ const UpdateDish = (props) => {
 
   const onFinish = (values) => {
     console.log("Success:", values);
-  };
-
-  const handleOk = () => {
-    setModalUpdate(false);
   };
 
   const handleCancel = () => {
@@ -86,10 +83,10 @@ const UpdateDish = (props) => {
   );
   return (
     <Modal
-      title="Update Dish"
+      title="Edit Dish"
       open={modalUpdate}
-      onOk={handleOk}
       onCancel={handleCancel}
+      footer={null}
       width={700}
     >
       <Divider></Divider>
@@ -211,6 +208,17 @@ const UpdateDish = (props) => {
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item label="Note" name="note">
+          <Input.TextArea placeholder="Enter note: (e.g. VIP)" rows={4} />
+        </Form.Item>
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Confirm
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

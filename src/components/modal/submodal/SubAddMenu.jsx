@@ -1,22 +1,30 @@
-import { Col, Divider, Form, Input, Modal, Row, Select } from "antd";
-import OrderList from "../table/subtable/OrderList";
-const AddOrder = (props) => {
-  const { modalAdd, setModalAdd } = props;
+import { Col, Divider, Form, Input, InputNumber, Modal, Row } from "antd";
+
+const SubAddMenu = (props) => {
+  const { openSubModal, setOpenSubModal } = props;
   const onFinish = (values) => {
     console.log("Success:", values);
   };
 
   const handleOk = () => {
-    setModalAdd(false);
+    setOpenSubModal(false);
   };
 
   const handleCancel = () => {
-    setModalAdd(false);
+    setOpenSubModal(false);
+  };
+
+  const onChange = (value) => {
+    console.log("changed", value);
+  };
+
+  const onChangePrice = (value) => {
+    console.log("changed", value);
   };
   return (
     <Modal
-      title="Add New Order"
-      open={modalAdd}
+      title="Add dish to menu"
+      open={openSubModal}
       onOk={handleOk}
       onCancel={handleCancel}
       width={700}
@@ -39,12 +47,12 @@ const AddOrder = (props) => {
         <Row gutter={[30, 30]}>
           <Col span={12}>
             <Form.Item
-              label="Customer"
-              name="customer"
+              label="Name"
+              name="name"
               rules={[
                 {
                   required: true,
-                  message: "Please input customer's name!",
+                  message: "Please input name!",
                 },
               ]}
             >
@@ -53,39 +61,26 @@ const AddOrder = (props) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Table"
-              name="table"
+              label="Discount"
+              name="discount"
               rules={[
                 {
                   required: true,
-                  message: "Please input table!",
+                  message: "Please input discount!",
                 },
               ]}
             >
-              <Input placeholder="Enter table" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              label="Total"
-              name="total"
-              rules={[
-                {
-                  required: true,
-                  //   message: "Please input your address!",
-                },
-              ]}
-            >
-              <Input readOnly />
+              <InputNumber
+                min={1}
+                defaultValue={1}
+                onChange={onChangePrice}
+                style={{ width: "100%" }}
+              />
             </Form.Item>
           </Col>
         </Row>
       </Form>
-      <OrderList></OrderList>
     </Modal>
   );
 };
-export default AddOrder;
+export default SubAddMenu;
