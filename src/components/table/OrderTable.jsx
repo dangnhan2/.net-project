@@ -21,27 +21,27 @@ const OrderTable = () => {
       key: "id",
     },
     {
-      title: "CUSTOMER",
+      title: "Customer",
       dataIndex: "customer",
       key: "customer",
     },
     {
-      title: "TABLE",
+      title: "Table",
       dataIndex: "table",
       key: "table",
     },
     {
-      title: "PRICE",
+      title: "Price",
       dataIndex: "price",
       key: "price",
     },
     {
-      title: "BOOKING TIME",
+      title: "Booking Time",
       dataIndex: "time",
       key: "time",
     },
     {
-      title: "STATUS",
+      title: "Status",
       dataIndex: "tags",
       key: "tags",
       render: (_, { tags }) => (
@@ -65,7 +65,7 @@ const OrderTable = () => {
                   fontWeight: "bold",
                 }}
               >
-                {tag.toUpperCase()}
+                {tag}
               </Tag>
             );
           })}
@@ -122,12 +122,12 @@ const OrderTable = () => {
           alignItems: "center",
         }}
       >
-        <h2>Ingredient</h2>
+        <h2>Order</h2>
         <div>
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );

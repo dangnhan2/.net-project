@@ -7,15 +7,16 @@ import {
   Select,
   Row,
   Col,
+  Button,
 } from "antd";
+import { useState } from "react";
+import { PlusCircleOutlined } from "@ant-design/icons";
+
 const AddIngredient = (props) => {
   const { modalAdd, setModalAdd } = props;
+
   const onFinish = (values) => {
     console.log("Success:", values);
-  };
-
-  const handleOk = () => {
-    setModalAdd(false);
   };
 
   const handleCancel = () => {
@@ -27,102 +28,101 @@ const AddIngredient = (props) => {
   };
   return (
     <Modal
-      title="New Ingredient"
+      title="Import Ingredient"
       open={modalAdd}
-      onOk={handleOk}
       onCancel={handleCancel}
+      footer={null}
       width={600}
     >
-      <Divider></Divider>
+      <Divider />
       <Form
-        name="basic"
-        labelCol={{
-          span: 24,
-        }}
-        wrapperCol={{
-          span: 24,
-        }}
-        initialValues={{
-          remember: true,
-        }}
+        name="ingredientForm"
+        layout="vertical"
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Row gutter={[30, 30]}>
-          <Col span={12}>
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input name!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Quantity"
-              name="quantity"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input quantity!",
-                },
-              ]}
-            >
-              <InputNumber
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please enter ingredient's name!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="Enter name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Supplier"
+            name="supplier"
+            rules={[{ required: true, message: "Please choose ingredient's supplier!" }]}
+            style={{ flex: 1 }}
+          >
+            <Select>
+            <Select.Option value="Kaiser Corporation">Kaiser Corporation</Select.Option>
+            <Select.Option value="Abydos School">Abydos School</Select.Option>
+            <Select.Option value="Angel 24">Angel 24</Select.Option>
+            <Select.Option value="SCHALE">SCHALE</Select.Option>
+          </Select>
+          </Form.Item>
+        </div>
+
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Quantity"
+            name="quantity"
+            rules={[{ required: true, message: "Please enter ingredient's quantity!" }]}
+            style={{ flex: 1 }}
+          >
+            <InputNumber
                 min={1}
                 defaultValue={1}
                 onChange={onChange}
                 style={{ width: "100%" }}
               />
-            </Form.Item>
-          </Col>
-        </Row>
+          </Form.Item>
 
-        <Row gutter={[30, 30]}>
-          <Col span={12}>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input price!",
-                },
-              ]}
-            >
-              <InputNumber
+          <Form.Item
+            label="Price"
+            name="Price"
+            rules={[{ required: true, message: "Please select a status!" }]}
+            style={{ flex: 1 }}
+          >
+            <InputNumber
                 min={1}
                 defaultValue={1}
                 onChange={onChange}
                 style={{ width: "100%" }}
               />
-            </Form.Item>
-          </Col>
+          </Form.Item>
+        </div>
 
-          <Col span={12}>
-            <Form.Item
-              label="Unit type"
-              name="type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select type!",
-                },
-              ]}
-            >
-              <Select>
-                <Select.Option value="kg">kg</Select.Option>
-                <Select.Option value="l">l</Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Unit Type"
+            name="Unit Type"
+            rules={[{ required: true, message: "Please choose ingredient's unit type!" }]}
+            style={{ flex: 1 }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Select style={{ width: "230px" }}>
+            <Select.Option value="kg">kg</Select.Option>
+            <Select.Option value="l">l</Select.Option>
+            <Select.Option value="gram">gram</Select.Option>
+            <Select.Option value="box">box</Select.Option>
+          </Select>
+          <Button type="primary" onClick={() => setOpenSubModal(true)} icon={<PlusCircleOutlined />} />
+        </div>
+          </Form.Item>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Confirm
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

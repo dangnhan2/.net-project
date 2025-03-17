@@ -1,5 +1,7 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import "../style/app.form.scss";
+import background from "../img/background.jpg";
+
 const Login = () => {
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -9,9 +11,13 @@ const Login = () => {
   };
   return (
     <div
-      className="container"
-      style={{ backgroundColor: "#5088FF", height: "100vh" }}
-    >
+  className="container"
+  style={{
+    background: `url(${background}) no-repeat center center / cover`,
+    height: "100vh",
+  }}
+>
+
       <div className="container-form">
         <h2 className="sign">Sign in</h2>
         <div style={{ color: "#58595A" }}>

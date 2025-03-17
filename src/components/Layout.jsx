@@ -57,8 +57,8 @@ const LayoutAdmin = () => {
             alignItems: "center",
           }}
         >
-          <h1 style={{ fontSize: "15px", color: "#6E9CFB" }}>Mado</h1>
-          <h1 style={{ fontSize: "15px" }}>Coffee</h1>
+          <h1 style={{ fontSize: "20px", color: "#6E9CFB" }}>Mado</h1>
+          <h1 style={{ fontSize: "20px" }}>Coffee</h1>
         </div>
         <Menu
           style={{
@@ -103,7 +103,7 @@ const LayoutAdmin = () => {
             {
               key: "6",
               icon: <BiFoodMenu />,
-              label: <Link>Menu</Link>,
+              label: <Link to="/menu">Menu</Link>,
             },
 
             {

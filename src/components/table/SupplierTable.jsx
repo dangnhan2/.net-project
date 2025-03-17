@@ -21,23 +21,23 @@ const SupplierTable = () => {
       key: "id",
     },
     {
-      title: "NAME",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       // render: (text) => <a>{text}</a>,
     },
     {
-      title: "PHONE NO",
+      title: "Phone No",
       dataIndex: "phone",
       key: "phone",
     },
     {
-      title: "ADDRESS",
+      title: "Address",
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "REPRESENTATVIE",
+      title: "Representative",
       dataIndex: "representative",
       key: "representative",
     },
@@ -144,7 +144,7 @@ const SupplierTable = () => {
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );

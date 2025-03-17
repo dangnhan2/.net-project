@@ -1,5 +1,5 @@
 import { Col, Divider, Form, Input, Modal, Row, Select } from "antd";
-
+import OrderList from "../table/subtable/OrderList";
 const UpdateOrder = (props) => {
   const [form] = Form.useForm();
   const { modalUpdate, setModalUpdate, dataRecord } = props;
@@ -16,7 +16,7 @@ const UpdateOrder = (props) => {
   };
   return (
     <Modal
-      title="Update Order"
+      title="Edit Order"
       open={modalUpdate}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -24,7 +24,6 @@ const UpdateOrder = (props) => {
     >
       <Divider></Divider>
       <Form
-        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -50,17 +49,48 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input placeholder="Enter name" />
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Table"
+              name="table"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input table!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[30, 30]}>
+          <Col span={12}>
+            <Form.Item
+              label="Total"
+              name="total"
+              rules={[
+                {
+                  required: true,
+                  //   message: "Please input your address!",
+                },
+              ]}
+            >
+              <Input readOnly />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Status"
-              name="tags"
+              name="tag"
               rules={[
                 {
                   required: true,
-                  message: "Please input table!",
+                  //   message: "Please input your address!",
                 },
               ]}
             >
@@ -72,25 +102,8 @@ const UpdateOrder = (props) => {
             </Form.Item>
           </Col>
         </Row>
-
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              label="Total"
-              name="total"
-              rules={[
-                {
-                  required: true,
-                  //   message: "Please input your address!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-        </Row>
       </Form>
-      {/* <OrderList></OrderList> */}
+      <OrderList></OrderList>
     </Modal>
   );
 };

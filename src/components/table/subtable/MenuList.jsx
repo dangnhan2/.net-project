@@ -1,9 +1,9 @@
 import { Button, Table, Tag } from "antd";
 import { useState } from "react";
 import { FaPencilAlt, FaPlus } from "react-icons/fa";
-import SubAddOrder from "../../modal/submodal/SubAddOrder";
+import SubAddMenu from "../../modal/submodal/SubAddMenu";
 
-const OrderList = () => {
+const MenuList = () => {
   const [openSubModal, setOpenSubModal] = useState(false);
 
   const handleUpdate = (record) => {
@@ -18,25 +18,19 @@ const OrderList = () => {
       key: "id",
     },
     {
-      title: "Dish",
-      dataIndex: "dish",
-      key: "dish",
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
+      title: "Dish Name",
+      dataIndex: "dishname",
+      key: "dishname",
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-
-    {
-      title: "Total Amount",
-      dataIndex: "total_amount",
-      key: "total_amount",
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
     },
     {
       title: "Action",
@@ -88,10 +82,10 @@ const OrderList = () => {
           alignItems: "center",
         }}
       >
-        <h2>Order's Dish List</h2>
+        <h2>Menu's Dish List</h2>
 
         <Button type="primary" onClick={() => setOpenSubModal(true)}>
-          <FaPlus /> Add dish to order
+          <FaPlus /> Add dish to menu
         </Button>
       </div>
     );
@@ -106,11 +100,11 @@ const OrderList = () => {
         //   position: ["bottomCenter"],
         // }}
       />
-      <SubAddOrder
+      <SubAddMenu
         openSubModal={openSubModal}
         setOpenSubModal={setOpenSubModal}
-      ></SubAddOrder>
+      ></SubAddMenu>
     </>
   );
 };
-export default OrderList;
+export default MenuList;

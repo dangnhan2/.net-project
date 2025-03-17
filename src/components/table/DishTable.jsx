@@ -24,7 +24,7 @@ const DishTable = () => {
       key: "id",
     },
     {
-      title: "IMAGE",
+      title: "Image",
       dataIndex: "image",
       render: (_, record) => (
         <img
@@ -35,12 +35,12 @@ const DishTable = () => {
       ),
     },
     {
-      title: "DISH",
+      title: "Dish",
       dataIndex: "dish",
       key: "dish",
     },
     {
-      title: "CATEGORY",
+      title: "Category",
       dataIndex: "category",
       key: "category",
     },
@@ -99,12 +99,12 @@ const DishTable = () => {
           alignItems: "center",
         }}
       >
-        <h2>Ingredient</h2>
+        <h2>Dish</h2>
         <div>
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );

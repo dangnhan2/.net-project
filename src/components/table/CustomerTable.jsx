@@ -5,7 +5,7 @@ import AddCustomer from "../modal/AddCustomer";
 import UpdateCustomer from "../modal/UpdateCustomer";
 const { Search } = Input;
 
-const UserTable = () => {
+const CustomerTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
@@ -22,17 +22,17 @@ const UserTable = () => {
       key: "id",
     },
     {
-      title: "FULL NAME",
+      title: "Full Name",
       dataIndex: "fullname",
       key: "fullname",
     },
     {
-      title: "PHONE NO",
+      title: "Phone No",
       dataIndex: "phone",
       key: "phone",
     },
     {
-      title: "ADDRESS",
+      title: "Address",
       dataIndex: "address",
       key: "address",
     },
@@ -98,7 +98,7 @@ const UserTable = () => {
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );
@@ -124,4 +124,4 @@ const UserTable = () => {
   );
 };
 
-export default UserTable;
+export default CustomerTable;
