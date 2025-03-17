@@ -10,6 +10,7 @@ import EmployeeTable from "./components/table/EmployeeTable";
 import DishTable from "./components/table/DishTable";
 import OrderTable from "./components/table/OrderTable";
 import BillTable from "./components/table/BillTable";
+import MenuTable from "./components/table/MenuTable";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/dish",
         element: <DishTable />,
+      },
+      {
+        path: "/menu",
+        element: <MenuTable />,
       },
       {
         path: "/order",

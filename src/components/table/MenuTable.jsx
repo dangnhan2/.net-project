@@ -1,24 +1,25 @@
-import { Button, Space, Table, Input, Tag } from "antd";
-import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import { Button, Table, Tag, Input } from "antd";
 import { useState } from "react";
-import AddOrder from "../modal/AddOrder";
-import UpdateOrder from "../modal/UpdateOrder";
+import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import AddMenu from "../modal/AddMenu";
+import UpdateMenu from "../modal/UpdateMenu";
 const { Search } = Input;
-const OrderTable = () => {
+const MenuTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
 
   const handleUpdate = (record) => {
-    const dishList = [
-      { id: "01", dish: "America Coffee", price: "1", quantity: 1 },
-      { id: "02", dish: "Lifton", price: "3.5", quantity: 3 },
+    const menuList = [
+      { id: "01", dish: "American Coffee", discount: "0.2" },
+      { id: "02", dish: "American Coffee", discount: "0.2" },
     ];
-    record.dishList = dishList;
-    console.log(record);
+    record.menuList = menuList;
+    // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
+
   const columns = [
     {
       title: "ID",
@@ -26,24 +27,9 @@ const OrderTable = () => {
       key: "id",
     },
     {
-      title: "CUSTOMER",
-      dataIndex: "customer",
-      key: "customer",
-    },
-    {
-      title: "TABLE",
-      dataIndex: "table",
-      key: "table",
-    },
-    {
-      title: "PRICE",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "BOOKING TIME",
-      dataIndex: "time",
-      key: "time",
+      title: "MENU",
+      dataIndex: "menu",
+      key: "menu",
     },
     {
       title: "STATUS",
@@ -53,13 +39,10 @@ const OrderTable = () => {
         <>
           {tags.map((tag) => {
             let color;
-            if (tag === "Completed") {
+            if (tag === "Active") {
               color = "success";
             }
-            if (tag === "Pending") {
-              color = "warning";
-            }
-            if (tag === "Rejected") {
+            if (tag === "In-Active") {
               color = "red";
             }
             return (
@@ -78,6 +61,11 @@ const OrderTable = () => {
       ),
     },
     {
+      title: "DESCRIPTION",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
       title: "Action",
       dataIndex: "action",
 
@@ -87,6 +75,9 @@ const OrderTable = () => {
             <Button onClick={() => handleUpdate(record)}>
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
+            <Button>
+              <FaRegTrashAlt style={{ color: "#F38177" }} />
+            </Button>
           </div>
         </>
       ),
@@ -95,27 +86,17 @@ const OrderTable = () => {
   const data = [
     {
       id: "01",
-      customer: "Johan",
-      table: "A02",
-      price: "$20",
-      time: "12:53 PM",
-      tags: ["Completed"],
+      menu: "Tet Festival",
+      tags: ["Active"],
+      description:
+        "Tet Festival is a festival that takes place in Tet, the Chinese New Year's Festival.",
     },
     {
       id: "02",
-      customer: "Han",
-      table: "A03",
-      price: "$20",
-      time: "10:53 PM",
-      tags: ["Pending"],
-    },
-    {
-      id: "03",
-      customer: "Sponge Bob",
-      table: "A04",
-      price: "$20",
-      time: "12:55 AM",
-      tags: ["Rejected"],
+      menu: "Winter Season",
+      tags: ["In-Active"],
+      description:
+        "Winter Season is a season of cold and snow in China, with temperatures dropping to -40°C (-40°F) during the winter months.",
     },
   ];
   const render = () => {
@@ -147,13 +128,13 @@ const OrderTable = () => {
           position: ["bottomCenter"],
         }}
       />
-      <AddOrder modalAdd={modalAdd} setModalAdd={setModalAdd}></AddOrder>
-      <UpdateOrder
+      <AddMenu modalAdd={modalAdd} setModalAdd={setModalAdd}></AddMenu>
+      <UpdateMenu
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
-      ></UpdateOrder>
+      ></UpdateMenu>
     </>
   );
 };
-export default OrderTable;
+export default MenuTable;

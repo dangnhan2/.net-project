@@ -103,7 +103,7 @@ const LayoutAdmin = () => {
             {
               key: "6",
               icon: <BiFoodMenu />,
-              label: <Link>Menu</Link>,
+              label: <Link to="/menu">Menu</Link>,
             },
 
             {

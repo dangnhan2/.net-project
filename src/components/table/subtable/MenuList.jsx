@@ -1,10 +1,9 @@
-import { Button, Table, Tag } from "antd";
+import { Button, Table } from "antd";
 import { useState } from "react";
 import { FaPencilAlt, FaPlus } from "react-icons/fa";
-import SubAddOrder from "../../modal/submodal/SubAddOrder";
-import UpdateOrder from "../../modal/UpdateOrder";
+import SubAddMenu from "../../modal/submodal/SubAddMenu";
 
-const OrderList = () => {
+const MenuList = () => {
   const [openSubModal, setOpenSubModal] = useState(false);
 
   const columns = [
@@ -19,20 +18,9 @@ const OrderList = () => {
       key: "dish",
     },
     {
-      title: "PRICE",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "QUANTITY",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-
-    {
-      title: "TOTAL AMOUNT",
-      dataIndex: "total_amount",
-      key: "total_amount",
+      title: "DISCOUNT",
+      dataIndex: "discount",
+      key: "discount",
     },
     {
       title: "Action",
@@ -49,32 +37,7 @@ const OrderList = () => {
       ),
     },
   ];
-  const data = [
-    // {
-    //   id: "01",
-    //   customer: "Johan",
-    //   table: "A02",
-    //   price: "$20",
-    //   time: "12:53 PM",
-    //   tags: ["Completed"],
-    // },
-    // {
-    //   id: "02",
-    //   customer: "Han",
-    //   table: "A03",
-    //   price: "$20",
-    //   time: "10:53 PM",
-    //   tags: ["Pending"],
-    // },
-    // {
-    //   id: "03",
-    //   customer: "Sponge Bob",
-    //   table: "A04",
-    //   price: "$20",
-    //   time: "12:55 AM",
-    //   tags: ["Rejected"],
-    // },
-  ];
+  const data = [];
   const render = () => {
     return (
       <div
@@ -84,10 +47,10 @@ const OrderList = () => {
           alignItems: "center",
         }}
       >
-        <h2>Order's Dish List</h2>
+        <h2>Menu's Dish List</h2>
 
         <Button type="primary" onClick={() => setOpenSubModal(true)}>
-          <FaPlus /> Add dish to order
+          <FaPlus /> Add dish to menu
         </Button>
       </div>
     );
@@ -102,11 +65,11 @@ const OrderList = () => {
         //   position: ["bottomCenter"],
         // }}
       />
-      <SubAddOrder
+      <SubAddMenu
         openSubModal={openSubModal}
         setOpenSubModal={setOpenSubModal}
-      ></SubAddOrder>
+      ></SubAddMenu>
     </>
   );
 };
-export default OrderList;
+export default MenuList;
