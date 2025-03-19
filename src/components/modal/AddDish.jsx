@@ -12,31 +12,46 @@ import {
   Upload,
 } from "antd";
 import { useState } from "react";
+import { addDish } from "../../api/api";
 
 const AddDish = (props) => {
-  const { modalAdd, setModalAdd } = props;
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+  const [form] = Form.useForm();
+  const { modalAdd, setModalAdd, getDishes } = props;
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState([]);
 
-  const handleOk = () => {
-    setModalAdd(false);
+  console.log(fileList[0].File);
+
+  const onFinish = async (values) => {
+    const { Name, Category, Price, Description } = values;
+    let res = await addDish(
+      Name,
+      Category,
+      Price,
+      Description,
+      fileList[0].File
+    );
+    if (res) {
+      message.success(res);
+      getDishes();
+      setModalAdd(false);
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Thêm món ăn thất bại",
+        duration: 3,
+      });
+    }
+    console.log(values);
   };
 
   const handleCancel = () => {
     setModalAdd(false);
+    form.resetFields();
   };
 
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState([
-    // {
-    //   uid: "-1",
-    //   name: "image.png",
-    //   status: "done",
-    //   url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    // },
-  ]);
+  // console.log(fileList);
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -45,10 +60,13 @@ const AddDish = (props) => {
     setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
   };
+
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-  const onChange = (value) => {
-    // console.log("changed", value);
-  };
+
+  // const onChange = (value) => {
+  //   // console.log("changed", value);
+  // };
+
   const uploadButton = (
     <button
       style={{
@@ -67,12 +85,18 @@ const AddDish = (props) => {
       </div>
     </button>
   );
+
+  const customRequest = async ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
   return (
     <Modal
-      title="New Employee"
+      title="Add New Dish"
       open={modalAdd}
-      onOk={handleOk}
       onCancel={handleCancel}
+      onOk={() => form.submit()}
       width={700}
     >
       <Divider></Divider>
@@ -87,6 +111,7 @@ const AddDish = (props) => {
         initialValues={{
           remember: true,
         }}
+        form={form}
         onFinish={onFinish}
         autoComplete="off"
       >
@@ -94,22 +119,33 @@ const AddDish = (props) => {
           <Col span={12}>
             <Form.Item
               label="Image"
-              name="image"
               rules={[
                 {
-                  required: true,
-                  message: "Please input your full name!",
+                  required: false,
                 },
               ]}
             >
               <Upload
-                // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                customRequest={customRequest}
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
+                // beforeUpload={(file) => {
+                //   console.log(file);
+                //   const isJPG =
+                //     file.type === "image/jpeg" || file.type === "image/png";
+                //   if (!isJPG) {
+                //     message.error("You can only upload JPG or PNG file!");
+                //     return false;
+                //   } else {
+                //     return file.name;
+                //   }
+                // }}
+                maxCount={1}
+                multiple="false"
               >
-                {fileList.length >= 8 ? null : uploadButton}
+                {fileList.length >= 2 ? null : uploadButton}
               </Upload>
               {previewImage && (
                 <Image
@@ -127,16 +163,16 @@ const AddDish = (props) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Dish"
-              name="dish"
+              label="Name"
+              name="Name"
               rules={[
                 {
                   required: true,
-                  message: "Please input dish!",
+                  message: "Please enter dish's name!",
                 },
               ]}
             >
-              <Input placeholder="Enter dish" />
+              <Input placeholder="Enter name" />
             </Form.Item>
           </Col>
         </Row>
@@ -144,19 +180,18 @@ const AddDish = (props) => {
         <Row gutter={[20, 20]}>
           <Col span={12}>
             <Form.Item
-              label="Role"
-              name="role"
+              label="Price"
+              name="Price"
               rules={[
                 {
                   required: true,
-                  message: "Please input your address!",
+                  message: "Please enter dish's price!",
                 },
               ]}
             >
               <InputNumber
                 min={1}
-                defaultValue={1}
-                onChange={onChange}
+                // onChange={onChange}
                 style={{ width: "100%" }}
               />
             </Form.Item>
@@ -164,7 +199,7 @@ const AddDish = (props) => {
           <Col span={12}>
             <Form.Item
               label="Category"
-              name="category"
+              name="Category"
               rules={[
                 {
                   required: true,
@@ -180,6 +215,9 @@ const AddDish = (props) => {
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item label="Note" name="Description">
+          <Input.TextArea placeholder="Enter note: (e.g. VIP)" rows={4} />
+        </Form.Item>
       </Form>
     </Modal>
   );

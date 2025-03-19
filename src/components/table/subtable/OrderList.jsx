@@ -14,23 +14,23 @@ const OrderList = () => {
       key: "id",
     },
     {
-      title: "DISH",
+      title: "Dish",
       dataIndex: "dish",
       key: "dish",
     },
     {
-      title: "PRICE",
+      title: "Price",
       dataIndex: "price",
       key: "price",
     },
     {
-      title: "QUANTITY",
+      title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
     },
 
     {
-      title: "TOTAL AMOUNT",
+      title: "Total Amount",
       dataIndex: "total_amount",
       key: "total_amount",
     },

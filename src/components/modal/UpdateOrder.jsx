@@ -1,16 +1,5 @@
-import {
-  Button,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Table,
-} from "antd";
+import { Col, Divider, Form, Input, Modal, Row, Select } from "antd";
 import { useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa";
 
 const UpdateOrder = (props) => {
   const [form] = Form.useForm();
@@ -99,7 +88,7 @@ const UpdateOrder = (props) => {
 
   return (
     <Modal
-      title="Update Order"
+      title="Edit Order"
       open={modalUpdate}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -107,7 +96,6 @@ const UpdateOrder = (props) => {
     >
       <Divider></Divider>
       <Form
-        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -146,13 +134,13 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input disabled />
+              <Input placeholder="Enter name" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Status"
-              name="tags"
+              label="Table"
+              name="table"
               rules={[
                 {
                   required: true,
@@ -160,17 +148,13 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Select>
-                <Select.Option value="pending">Pending</Select.Option>
-                <Select.Option value="rejected">Rejected</Select.Option>
-                <Select.Option value="completed">Completed</Select.Option>
-              </Select>
+              <Input />
             </Form.Item>
           </Col>
         </Row>
 
-        <Row>
-          <Col span={24}>
+        <Row gutter={[30, 30]}>
+          <Col span={12}>
             <Form.Item
               label="Total"
               name="total"
@@ -180,19 +164,12 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input readOnly disabled />
+              <Input />
             </Form.Item>
           </Col>
         </Row>
       </Form>
-      <Table
-        columns={columns}
-        dataSource={data}
-        title={render}
-        // pagination={{
-        //   position: ["bottomCenter"],
-        // }}
-      />
+      {/* <OrderList></OrderList> */}
     </Modal>
   );
 };

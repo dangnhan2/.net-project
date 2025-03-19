@@ -15,7 +15,7 @@ const AddOrder = (props) => {
   };
   return (
     <Modal
-      title="New Order"
+      title="Add New Order"
       open={modalAdd}
       onOk={handleOk}
       onCancel={handleCancel}

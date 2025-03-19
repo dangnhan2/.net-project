@@ -1,46 +1,67 @@
-import { Button, Space, Table, Input } from "antd";
+import { Button, Space, Table, Input, App } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import coffee1 from "../../img/coffee1.jpg";
 import beer from "../../img/beer.jpg";
 import tea from "../../img/tea.jpg";
 import AddDish from "../modal/AddDish";
 import UpdateDish from "../modal/UpdateDish";
+import { getAllDishes } from "../../api/api";
 const { Search } = Input;
 const DishTable = () => {
+  const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
-
+  const [dataDishes, setDataDishes] = useState();
   const handleUpdate = (record) => {
     console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
+
+  useEffect(() => {
+    getDishes();
+  }, []);
+
+  const getDishes = async () => {
+    let res = await getAllDishes();
+    if (res) {
+      setDataDishes(res);
+    }
+  };
+
   const columns = [
     {
       title: "ID",
       dataIndex: "id",
       key: "id",
     },
+
     {
-      title: "IMAGE",
-      dataIndex: "image",
+      title: "Image",
+      dataIndex: " imageUrl",
+      width: 400,
       render: (_, record) => (
         <img
-          src={`${record.image}`}
+          src={`${import.meta.env.VITE_IMAGE_URL}images/${record.imageUrl}`}
           alt={record.dish}
           style={{ height: "10%", width: "15%" }}
         />
       ),
     },
     {
-      title: "DISH",
-      dataIndex: "dish",
-      key: "dish",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: "CATEGORY",
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Category",
       dataIndex: "category",
       key: "category",
     },
@@ -67,29 +88,6 @@ const DishTable = () => {
       ),
     },
   ];
-  const data = [
-    {
-      id: "01",
-      image: coffee1,
-      dish: "Detox",
-      category: "Coffee",
-      price: "$1",
-    },
-    {
-      id: "02",
-      image: tea,
-      dish: "Green Tea",
-      category: "Tea",
-      price: "$1.5",
-    },
-    {
-      id: "03",
-      image: beer,
-      dish: "Blue Berry",
-      category: "Beer",
-      price: "$2",
-    },
-  ];
   const render = () => {
     return (
       <div
@@ -99,12 +97,12 @@ const DishTable = () => {
           alignItems: "center",
         }}
       >
-        <h2>Ingredient</h2>
+        <h2>Dish</h2>
         <div>
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );
@@ -113,17 +111,22 @@ const DishTable = () => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={dataDishes}
         title={render}
         pagination={{
           position: ["bottomCenter"],
         }}
       />
-      <AddDish modalAdd={modalAdd} setModalAdd={setModalAdd}></AddDish>
+      <AddDish
+        modalAdd={modalAdd}
+        setModalAdd={setModalAdd}
+        getDishes={getDishes}
+      ></AddDish>
       <UpdateDish
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
+        getDishes={getDishes}
       ></UpdateDish>
     </>
   );

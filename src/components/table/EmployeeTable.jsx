@@ -22,22 +22,22 @@ const EmployeeTable = () => {
       key: "id",
     },
     {
-      title: "FULL NAME",
+      title: "Full Name",
       dataIndex: "fullname",
       key: "fullname",
     },
     {
-      title: "PHONE NO",
+      title: "Phone No",
       dataIndex: "phone",
       key: "phone",
     },
     {
-      title: "ROLE",
+      title: "Role",
       dataIndex: "role",
       key: "role",
     },
     {
-      title: "STATUS",
+      title: "Status",
       dataIndex: "tags",
       key: "tags",
       render: (_, { tags }) => (
@@ -58,7 +58,7 @@ const EmployeeTable = () => {
                   fontWeight: "bold",
                 }}
               >
-                {tag.toUpperCase()}
+                {tag}
               </Tag>
             );
           })}
@@ -122,12 +122,12 @@ const EmployeeTable = () => {
           alignItems: "center",
         }}
       >
-        <h2>Ingredient</h2>
+        <h2>Employee</h2>
         <div>
           <Search placeholder="Search" allowClear style={{ width: 500 }} />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
-          <FaPlus /> Add new
+          <FaPlus /> Add
         </Button>
       </div>
     );

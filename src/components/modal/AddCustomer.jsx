@@ -1,79 +1,151 @@
-import { Divider, Form, Input, Modal } from "antd";
+import { Divider, Form, Input, Modal, Select, Button, App } from "antd";
+import { addCustomer } from "../../api/api";
+import { useState } from "react";
 
 const AddCustomer = (props) => {
-  const { modalAdd, setModalAdd } = props;
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const { message, notification, modal } = App.useApp();
+  const { modalAdd, setModalAdd, getCustomer } = props;
+  const [gender, setGender] = useState(null);
+  const [form] = Form.useForm();
+  console.log(gender);
+  const handleGenderChange = (value) => {
+    console.log(value);
+    if (value === 0) setGender(0);
+
+    if (value === 1) setGender(1);
+
+    if (value === 2) setGender(2);
   };
 
-  const handleOk = () => {
-    setModalAdd(false);
+  const onFinish = async (values) => {
+    const { fullName, phoneNo, email, address, note } = values;
+    let data = await addCustomer(
+      fullName,
+      phoneNo,
+      email,
+      address,
+      gender,
+      note
+    );
+    console.log(data);
+    console.log(gender);
+
+    if (data) {
+      message.success("Thêm thành công");
+      getCustomer();
+      setModalAdd(false);
+      // setGender(null);
+      form.resetFields();
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Thêm thất bại",
+        duration: 4,
+      });
+    }
   };
 
   const handleCancel = () => {
     setModalAdd(false);
+    form.resetFields();
   };
+
   return (
     <Modal
-      title="New Customer"
+      title="Add New Customer"
       open={modalAdd}
-      onOk={handleOk}
       onCancel={handleCancel}
+      onOk={() => {
+        form.submit();
+      }}
+      // footer={null}
       width={600}
     >
-      <Divider></Divider>
+      <Divider />
       <Form
-        name="basic"
-        labelCol={{
-          span: 24,
-        }}
-        wrapperCol={{
-          span: 24,
-        }}
-        initialValues={{
-          remember: true,
-        }}
+        name="customerForm"
+        layout="vertical"
         onFinish={onFinish}
         autoComplete="off"
+        form={form}
       >
-        <Form.Item
-          label="Full name"
-          name="fullname"
-          rules={[
-            {
-              required: true,
-              message: "Please input your phone fullname!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Full Name"
+            name="fullName"
+            rules={[{ required: true, message: "Please enter full name!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="Enter name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Phone Number"
+            name="phoneNo"
+            rules={[{ required: true, message: "Please enter phone number!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="Enter phone" />
+          </Form.Item>
+        </div>
+
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Please enter a valid email!",
+              },
+            ]}
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="Enter email" />
+          </Form.Item>
+
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[{ required: true, message: "Please enter address!" }]}
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="Enter address" />
+          </Form.Item>
+        </div>
 
         <Form.Item
-          label="Phone"
-          name="phone"
-          rules={[
-            {
-              required: true,
-              message: "Please input your phone number!",
-            },
-          ]}
+          label="Gender"
+          // name="gen"
+          rules={[{ required: true, message: "Please choose gender!" }]}
         >
-          <Input />
+          <Select
+            placeholder="Choose gender"
+            onChange={handleGenderChange}
+            value={gender}
+          >
+            <Select.Option value={0}>Male</Select.Option>
+            <Select.Option value={1}>Female</Select.Option>
+            <Select.Option value={2}>Other</Select.Option>
+          </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Address"
-          name="address"
-          rules={[
-            {
-              required: true,
-              message: "Please input your address!",
-            },
-          ]}
-        >
-          <Input />
+        <Form.Item label="Note" name="note">
+          <Input.TextArea placeholder="Enter note: (e.g. VIP)" rows={4} />
         </Form.Item>
+
+        {/* <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <Button
+            onClick={handleCancel}
+            style={{ backgroundColor: "red", color: "white" }}
+          >
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Confirm
+          </Button>
+        </div> */}
       </Form>
     </Modal>
   );
