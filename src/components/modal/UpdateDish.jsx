@@ -11,18 +11,43 @@ import {
   Row,
   Select,
   Upload,
-  Button
+  Button,
+  App,
 } from "antd";
 import { useEffect, useState } from "react";
+import { updateDish } from "../../api/api";
 const UpdateDish = (props) => {
   const [form] = Form.useForm();
-  const { modalUpdate, setModalUpdate, dataRecord } = props;
+  const { modalUpdate, setModalUpdate, dataRecord, getDishes } = props;
+  const { message, notification } = App.useApp();
   const [fileList, setFileList] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+
   console.log(dataRecord);
   console.log(fileList);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (values) => {
+    const { id, name, category, price, description } = values;
+    let res = await updateDish(
+      id,
+      name,
+      category,
+      price,
+      description,
+      fileList[0].originFileObj
+    );
+    if (res) {
+      message.success("Cập nhật thành công");
+      getDishes();
+      setModalUpdate(false);
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Cập nhật thất bại",
+        duration: 3,
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -30,27 +55,25 @@ const UpdateDish = (props) => {
   };
 
   useEffect(() => {
-    const thumbnail = {
-      uid: uuidv4(),
-      name: dataRecord?.dish,
-      status: "done",
-      url: dataRecord?.image,
-    };
-
     if (dataRecord) {
+      const thumbnail = {
+        uid: uuidv4(),
+        name: dataRecord?.dish,
+        status: "done",
+        url: `${import.meta.env.VITE_IMAGE_URL}images/${dataRecord.imageUrl}`,
+      };
+
       form.setFieldsValue({
         image: thumbnail,
         id: dataRecord.id,
-        dish: dataRecord.dish,
+        name: dataRecord.name,
         price: dataRecord.price,
         category: dataRecord.category,
+        description: dataRecord.description,
       });
+      setFileList([thumbnail]);
     }
-    setFileList([thumbnail]);
   }, [dataRecord]);
-
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -81,12 +104,20 @@ const UpdateDish = (props) => {
       </div>
     </button>
   );
+
+  const customRequest = async ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
   return (
     <Modal
       title="Edit Dish"
       open={modalUpdate}
       onCancel={handleCancel}
-      footer={null}
+      onOk={() => {
+        form.submit();
+      }}
       width={700}
     >
       <Divider></Divider>
@@ -105,39 +136,22 @@ const UpdateDish = (props) => {
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Form.Item
-          hidden
-          label="Id"
-          name="id"
-          rules={[
-            {
-              required: true,
-              message: "Please input dish!",
-            },
-          ]}
-        >
-          <Input placeholder="Enter dish" />
+        <Form.Item hidden label="Id" name="id">
+          <Input />
         </Form.Item>
         <Row gutter={[30, 30]}>
           <Col span={12}>
-            <Form.Item
-              label="Image"
-              name="image"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your full name!",
-                },
-              ]}
-            >
+            <Form.Item label="Image">
               <Upload
-                // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                customRequest={customRequest}
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
+                maxCount={1}
+                multiple={false}
               >
-                {fileList.length >= 8 ? null : uploadButton}
+                {fileList.length >= 2 ? null : uploadButton}
               </Upload>
               {previewImage && (
                 <Image
@@ -156,7 +170,7 @@ const UpdateDish = (props) => {
           <Col span={12}>
             <Form.Item
               label="Dish"
-              name="dish"
+              name="name"
               rules={[
                 {
                   required: true,
@@ -177,7 +191,7 @@ const UpdateDish = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your address!",
+                  message: "Please input your price!",
                 },
               ]}
             >
@@ -208,17 +222,9 @@ const UpdateDish = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item label="Note" name="note">
+        <Form.Item label="Note" name="description">
           <Input.TextArea placeholder="Enter note: (e.g. VIP)" rows={4} />
         </Form.Item>
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Confirm
-          </Button>
-        </div>
       </Form>
     </Modal>
   );

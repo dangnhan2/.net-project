@@ -1,5 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
 import {
+  App,
   Col,
   Divider,
   Form,
@@ -15,25 +16,27 @@ import { useState } from "react";
 import { addDish } from "../../api/api";
 
 const AddDish = (props) => {
+  const { message, notification } = App.useApp();
   const [form] = Form.useForm();
   const { modalAdd, setModalAdd, getDishes } = props;
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
 
-  console.log(fileList[0].File);
+  console.log(fileList[0]);
 
   const onFinish = async (values) => {
-    const { Name, Category, Price, Description } = values;
+    const { name, category, price, description } = values;
     let res = await addDish(
-      Name,
-      Category,
-      Price,
-      Description,
-      fileList[0].File
+      name,
+      category,
+      price,
+      description,
+      fileList[0].originFileObj
     );
     if (res) {
-      message.success(res);
+      setFileList([]);
+      message.success("Thêm thành công");
       getDishes();
       setModalAdd(false);
     } else {
@@ -49,9 +52,8 @@ const AddDish = (props) => {
   const handleCancel = () => {
     setModalAdd(false);
     form.resetFields();
+    setFileList([]);
   };
-
-  // console.log(fileList);
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -62,10 +64,6 @@ const AddDish = (props) => {
   };
 
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-
-  // const onChange = (value) => {
-  //   // console.log("changed", value);
-  // };
 
   const uploadButton = (
     <button
@@ -96,7 +94,9 @@ const AddDish = (props) => {
       title="Add New Dish"
       open={modalAdd}
       onCancel={handleCancel}
-      onOk={() => form.submit()}
+      onOk={() => {
+        form.submit();
+      }}
       width={700}
     >
       <Divider></Divider>
@@ -131,19 +131,8 @@ const AddDish = (props) => {
                 fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
-                // beforeUpload={(file) => {
-                //   console.log(file);
-                //   const isJPG =
-                //     file.type === "image/jpeg" || file.type === "image/png";
-                //   if (!isJPG) {
-                //     message.error("You can only upload JPG or PNG file!");
-                //     return false;
-                //   } else {
-                //     return file.name;
-                //   }
-                // }}
                 maxCount={1}
-                multiple="false"
+                multiple={false}
               >
                 {fileList.length >= 2 ? null : uploadButton}
               </Upload>
@@ -164,7 +153,7 @@ const AddDish = (props) => {
           <Col span={12}>
             <Form.Item
               label="Name"
-              name="Name"
+              name="name"
               rules={[
                 {
                   required: true,
@@ -181,7 +170,7 @@ const AddDish = (props) => {
           <Col span={12}>
             <Form.Item
               label="Price"
-              name="Price"
+              name="price"
               rules={[
                 {
                   required: true,
@@ -189,17 +178,13 @@ const AddDish = (props) => {
                 },
               ]}
             >
-              <InputNumber
-                min={1}
-                // onChange={onChange}
-                style={{ width: "100%" }}
-              />
+              <InputNumber min={1} style={{ width: "100%" }} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Category"
-              name="Category"
+              name="category"
               rules={[
                 {
                   required: true,
@@ -215,7 +200,7 @@ const AddDish = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item label="Note" name="Description">
+        <Form.Item label="Note" name="description">
           <Input.TextArea placeholder="Enter note: (e.g. VIP)" rows={4} />
         </Form.Item>
       </Form>

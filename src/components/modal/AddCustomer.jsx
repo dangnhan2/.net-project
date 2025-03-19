@@ -58,7 +58,6 @@ const AddCustomer = (props) => {
       onOk={() => {
         form.submit();
       }}
-      // footer={null}
       width={600}
     >
       <Divider />

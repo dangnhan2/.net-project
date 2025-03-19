@@ -49,12 +49,34 @@ export const getAllDishes = () => {
   return axios.get(`Dishes/GetAllDishes`);
 };
 
-export const addDish = (Name, Category, Price, Description, Image) => {
-  return axios.post(`Dishes/CreateDish`, {
-    Name,
-    Category,
-    Price,
-    Description,
-    Image,
+export const addDish = (name, category, price, description, image) => {
+  const formData = new FormData();
+  formData.append("name", name); // String
+  formData.append("category", category); // String
+  formData.append("price", price); // String
+  formData.append("description", description); // String
+  formData.append("image", image); // File
+  return axios.post("Dishes/CreateDish", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
+};
+
+export const updateDish = (id, name, category, price, description, image) => {
+  const formData = new FormData();
+  formData.append("name", name); // String
+  formData.append("category", category); // String
+  formData.append("price", price); // String
+  formData.append("description", description); // String
+  formData.append("image", image); // File
+  return axios.put(`Dishes/UpdateDish/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const deleteDish = (id) => {
+  return axios.delete(`Dishes/DeleteDish/${id}`);
 };

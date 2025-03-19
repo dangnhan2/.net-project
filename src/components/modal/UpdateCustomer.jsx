@@ -6,22 +6,23 @@ const UpdateCustomer = (props) => {
   const { message, notification } = App.useApp();
   const [form] = Form.useForm();
   const { modalUpdate, setModalUpdate, dataRecord, getCustomer } = props;
-  const [gender, setGender] = useState();
-
+  const [genderChange, setGenderChange] = useState();
   console.log(dataRecord);
 
   const onFinish = async (values) => {
-    const { fullName, phoneNo, email, address, gender, notes } = values;
+    const { id, fullName, phoneNo, email, address, note } = values;
     let res = await updateCustomer(
+      id,
       fullName,
       phoneNo,
       email,
       address,
-      gender,
-      notes
+      genderChange,
+      note
     );
+
     if (res) {
-      message.success(res.message);
+      message.success("Cập nhật thành công");
       setModalUpdate(false);
       getCustomer();
       form.resetFields();
@@ -36,14 +37,31 @@ const UpdateCustomer = (props) => {
 
   const handleCancel = () => {
     setModalUpdate(false);
-    form.resetFields();
+  };
+
+  const handleGenderChange = (value) => {
+    const genderNumber =
+      value === "Male"
+        ? 0
+        : value === "Female"
+        ? 1
+        : value === "Other"
+        ? 2
+        : null;
+
+    setGenderChange(genderNumber);
   };
 
   useEffect(() => {
     if (dataRecord) {
-      if (dataRecord.gender === 0) setGender("Male");
-      if (dataRecord.gender === 1) setGender("Female");
-      if (dataRecord.gender === 2) setGender("Other");
+      const genderString =
+        dataRecord.gender === 0
+          ? "Male"
+          : dataRecord.gender === 1
+          ? "Female"
+          : dataRecord.gender === 2
+          ? "Other"
+          : undefined;
 
       form.setFieldsValue({
         id: dataRecord.id,
@@ -51,9 +69,11 @@ const UpdateCustomer = (props) => {
         phoneNo: dataRecord.phoneNo,
         email: dataRecord.email,
         address: dataRecord.address,
-        gender: gender,
+        gender: genderString,
         note: dataRecord.note,
       });
+
+      setGenderChange(genderString);
     }
   }, [dataRecord]);
 
@@ -63,7 +83,6 @@ const UpdateCustomer = (props) => {
       open={modalUpdate}
       onCancel={handleCancel}
       onOk={() => form.submit()}
-      // footer={null}
       width={600}
     >
       <Divider></Divider>
@@ -74,6 +93,10 @@ const UpdateCustomer = (props) => {
         onFinish={onFinish}
         autoComplete="off"
       >
+        <Form.Item label="Id" name="id" style={{ flex: 1 }} hidden={true}>
+          <Input />
+        </Form.Item>
+
         <div style={{ display: "flex", gap: "16px" }}>
           <Form.Item
             label="Full Name"
@@ -122,28 +145,23 @@ const UpdateCustomer = (props) => {
 
         <Form.Item
           label="Gender"
-          name="gender"
           rules={[{ required: true, message: "Please choose gender!" }]}
+          name="gender"
         >
-          <Select placeholder="Choose gender">
-            <Select.Option value="male">Male</Select.Option>
-            <Select.Option value="female">Female</Select.Option>
-            <Select.Option value="other">Other</Select.Option>
+          <Select
+            placeholder="Choose gender"
+            value={genderChange}
+            onChange={handleGenderChange}
+          >
+            <Select.Option value="Male">Male</Select.Option>
+            <Select.Option value="Female">Female</Select.Option>
+            <Select.Option value="Other">Other</Select.Option>
           </Select>
         </Form.Item>
 
         <Form.Item label="Note" name="note">
           <Input.TextArea />
         </Form.Item>
-
-        {/* <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Confirm
-          </Button>
-        </div> */}
       </Form>
     </Modal>
   );

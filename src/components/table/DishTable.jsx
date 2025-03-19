@@ -1,12 +1,9 @@
-import { Button, Space, Table, Input, App } from "antd";
+import { Button, Space, Table, Input, App, Popconfirm } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import coffee1 from "../../img/coffee1.jpg";
-import beer from "../../img/beer.jpg";
-import tea from "../../img/tea.jpg";
 import AddDish from "../modal/AddDish";
 import UpdateDish from "../modal/UpdateDish";
-import { getAllDishes } from "../../api/api";
+import { deleteDish, getAllDishes } from "../../api/api";
 const { Search } = Input;
 const DishTable = () => {
   const { message, notification } = App.useApp();
@@ -29,6 +26,24 @@ const DishTable = () => {
     if (res) {
       setDataDishes(res);
     }
+  };
+
+  const confirm = async (record, e) => {
+    let res = await deleteDish(record.id);
+    if (res) {
+      message.success("Xóa món ăn thành công");
+      getDishes();
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Xóa món ăn thất bại",
+        duration: 3,
+      });
+    }
+  };
+
+  const cancel = (e) => {
+    // console.log(e);
   };
 
   const columns = [
@@ -80,9 +95,19 @@ const DishTable = () => {
             <Button onClick={() => handleUpdate(record)}>
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
-            <Button>
-              <FaRegTrashAlt style={{ color: "#F38177" }} />
-            </Button>
+            <Popconfirm
+              title="Xóa món ăn"
+              description="Bạn có muốn xóa món ăn này ?"
+              placement="bottomRight"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => confirm(record)}
+              onCancel={cancel}
+            >
+              <Button>
+                <FaRegTrashAlt style={{ color: "#F38177" }} />
+              </Button>
+            </Popconfirm>
           </div>
         </>
       ),
