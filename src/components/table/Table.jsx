@@ -1,36 +1,95 @@
-import { Button, Space, Table, Tag, Input } from "antd";
+import { Button, Space, Table, Tag, Input, Popconfirm, App } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import AddTable from "../modal/AddTable";
 import UpdateTable from "../modal/UpdateTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { deleteTable, getAllTables } from "../../api/api";
 const { Search } = Input;
 const T_Table = () => {
+  const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
+  const [dataTable, setDataTable] = useState();
+  const [dataSearch, setDataSearch] = useState();
+  const [sort, setSort] = useState("?capacity=DESC");
+  console.log(sort);
 
   const handleUpdate = (record) => {
-    // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
+
+  const handleSearch = (e) => {
+    setDataSearch(e.target.value);
+  };
+
+  useEffect(() => {
+    getTables();
+  }, [dataSearch, sort]);
+
+  const getTables = async () => {
+    let query = "";
+
+    if (sort) {
+      query = sort;
+    }
+    if (dataSearch) {
+      query = `?tableNumber=${dataSearch}`;
+    }
+
+    let res = await getAllTables(query);
+    if (res) {
+      setDataTable(res.data);
+    }
+  };
+
+  const confirm = async (record, e) => {
+    let res = await deleteTable(record.id);
+    if (res) {
+      message.success(res.message);
+      getTables();
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Xóa bàn thất bại",
+        duration: 3,
+      });
+    }
+  };
+
+  const cancel = (e) => {
+    // console.log(e);
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log(sorter);
+    let query = "";
+    if (sorter && sorter !== undefined) {
+      query =
+        sorter.order == "ascend"
+          ? `?${sorter.field}=ASC`
+          : `?${sorter.field}=DESC`;
+    }
+    setSort(query);
+  };
+
   const columns = [
     {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      render: (text) => <a>{text}</a>,
     },
     {
       title: "Number",
       dataIndex: "number",
       key: "number",
-      render: (text) => <a>{text}</a>,
     },
     {
       title: "Capacity",
       dataIndex: "capacity",
       key: "capacity",
+      sorter: true,
     },
     {
       title: "Location",
@@ -39,41 +98,42 @@ const T_Table = () => {
     },
     {
       title: "Status",
-      dataIndex: "tags",
-      key: "tags",
-      render: (_, { tags }) => (
+      dataIndex: "status",
+      key: "status",
+      sorter: true,
+      render: (status) => (
         <>
-          {tags.map((tag) => {
-            let color;
-            if (tag === "Using") {
-              color = "purple";
+          <Tag
+            color={
+              status === 0
+                ? "purple"
+                : status === 1
+                ? "orange"
+                : status === 2
+                ? "green"
+                : status === 3
+                ? "red"
+                : "default"
             }
-            if (tag === "On hold") {
-              color = "warning";
-            }
-            if (tag === "Empty") {
-              color = "green";
-            }
-            if (tag === "Unavaliable") {
-              color = "red";
-            }
-            return (
-              <Tag
-                color={color}
-                key={tag}
-                style={{
-                  fontWeight: "bold",
-                  width: "80px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  textAlign: "center",
-                }}
-              >
-                {tag}
-              </Tag>
-            );
-          })}
+            style={{
+              fontWeight: "bold",
+              width: "80px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            {status === 0
+              ? "On hold"
+              : status === 1
+              ? "Unavaliable"
+              : status === 2
+              ? "Using"
+              : status === 3
+              ? "Empty"
+              : "Unknown"}
+          </Tag>
         </>
       ),
     },
@@ -87,42 +147,22 @@ const T_Table = () => {
             <Button onClick={() => handleUpdate(record)}>
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
-            <Button>
-              <FaRegTrashAlt style={{ color: "#F38177" }} />
-            </Button>
+            <Popconfirm
+              title="Xóa bàn"
+              description="Bạn có muốn xóa bàn này ?"
+              placement="bottomRight"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => confirm(record)}
+              onCancel={cancel}
+            >
+              <Button>
+                <FaRegTrashAlt style={{ color: "#F38177" }} />
+              </Button>
+            </Popconfirm>
           </div>
         </>
       ),
-    },
-  ];
-  const data = [
-    {
-      id: "01",
-      number: "A01",
-      capacity: 10,
-      location: "Floor A",
-      tags: ["Using"],
-    },
-    {
-      id: "02",
-      number: "A02",
-      capacity: 8,
-      location: "Floor A",
-      tags: ["Unavaliable"],
-    },
-    {
-      id: "03",
-      number: "A03",
-      capacity: 10,
-      location: "Floor B",
-      tags: ["On hold"],
-    },
-    {
-      id: "04",
-      number: "A04",
-      capacity: 4,
-      location: "Floor B",
-      tags: ["Empty"],
     },
   ];
 
@@ -137,7 +177,13 @@ const T_Table = () => {
       >
         <h2>Table</h2>
         <div>
-          <Search placeholder="Search" allowClear style={{ width: 500 }} />
+          <Search
+            placeholder="Search"
+            allowClear
+            style={{ width: 500 }}
+            value={dataSearch}
+            onChange={handleSearch}
+          />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
           <FaPlus /> Add
@@ -149,17 +195,23 @@ const T_Table = () => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={dataTable}
         title={render}
+        onChange={handleTableChange}
         pagination={{
           position: ["bottomCenter"],
         }}
       />
-      <AddTable modalAdd={modalAdd} setModalAdd={setModalAdd}></AddTable>
+      <AddTable
+        modalAdd={modalAdd}
+        setModalAdd={setModalAdd}
+        getTables={getTables}
+      ></AddTable>
       <UpdateTable
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
+        getTables={getTables}
       ></UpdateTable>
     </>
   );

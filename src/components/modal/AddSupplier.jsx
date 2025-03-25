@@ -1,10 +1,25 @@
-import { Divider, Form, Input, Modal, Button } from "antd";
+import { Divider, Form, Input, Modal, App } from "antd";
+import { addSupplier } from "../../api/api";
 
 const AddSupplier = (props) => {
-  const { modalAdd, setModalAdd } = props;
+  const { message, notification } = App.useApp();
+  const [form] = Form.useForm();
+  const { modalAdd, setModalAdd, getSuppliers } = props;
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (values) => {
+    const { name, phoneNo, email, address, representative } = values;
+    let res = await addSupplier(name, phoneNo, address, representative, email);
+    if (res) {
+      message.success(res.message);
+      getSuppliers();
+      setModalAdd(false);
+    } else {
+      notification.error({
+        message: "Có lỗi xảy ra",
+        description: "Thêm giữ liệu thất bại",
+        duration: 3,
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -15,11 +30,14 @@ const AddSupplier = (props) => {
       title="Add New Supplier"
       open={modalAdd}
       onCancel={handleCancel}
-      footer={null}
+      onOk={() => {
+        form.submit();
+      }}
       width={600}
     >
       <Divider />
       <Form
+        form={form}
         name="supplierForm"
         layout="vertical"
         onFinish={onFinish}
@@ -29,7 +47,9 @@ const AddSupplier = (props) => {
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Please enter supplier's name!" }]}
+            rules={[
+              { required: true, message: "Please enter supplier's name!" },
+            ]}
             style={{ flex: 1 }}
           >
             <Input placeholder="Enter name" />
@@ -37,7 +57,7 @@ const AddSupplier = (props) => {
 
           <Form.Item
             label="Phone Number"
-            name="phone"
+            name="phoneNo"
             rules={[{ required: true, message: "Please enter phone number!" }]}
             style={{ flex: 1 }}
           >
@@ -49,7 +69,13 @@ const AddSupplier = (props) => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Please enter a valid email!",
+              },
+            ]}
             style={{ flex: 1 }}
           >
             <Input placeholder="Enter email" />
@@ -66,23 +92,16 @@ const AddSupplier = (props) => {
         </div>
 
         <div style={{ display: "flex", gap: "16px" }}>
-        <Form.Item
+          <Form.Item
             label="Representative"
             name="representative"
-            rules={[{ required: true, message: "Please enter a representative!" }]}
+            rules={[
+              { required: true, message: "Please enter a representative!" },
+            ]}
             style={{ flex: 1 }}
           >
             <Input placeholder="Enter representative" />
           </Form.Item>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Confirm
-          </Button>
         </div>
       </Form>
     </Modal>

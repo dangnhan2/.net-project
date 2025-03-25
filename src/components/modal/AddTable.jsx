@@ -1,27 +1,50 @@
-import { Divider, Form, Input, InputNumber, Modal, Select, Button } from "antd";
+import { Divider, Form, Input, InputNumber, Modal, Select, App } from "antd";
+import { addTable } from "../../api/api";
+import { useState } from "react";
 const AddTable = (props) => {
-  const { modalAdd, setModalAdd } = props;
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [form] = Form.useForm();
+  const { message, notification } = App.useApp();
+  const { modalAdd, setModalAdd, getTables } = props;
+  const [statusTable, setStatusTable] = useState();
+
+  const onFinish = async (values) => {
+    const { number, capacity, location, status } = values;
+    let res = await addTable(number, capacity, location, statusTable);
+    if (res) {
+      message.success(res.message);
+      setModalAdd(false);
+      getTables();
+      form.resetFields();
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Thêm bàn thất bại",
+        duration: 3,
+      });
+    }
   };
 
   const handleCancel = () => {
     setModalAdd(false);
   };
 
-  const onChange = (value) => {
-    // console.log("changed", value);
+  const handleStatus = (e) => {
+    setStatusTable(e);
   };
+
   return (
     <Modal
       title="Add New Table"
       open={modalAdd}
       onCancel={handleCancel}
-      footer={null}
+      onOk={() => {
+        form.submit();
+      }}
       width={600}
     >
       <Divider />
       <Form
+        form={form}
         name="tableForm"
         layout="vertical"
         onFinish={onFinish}
@@ -31,7 +54,9 @@ const AddTable = (props) => {
           <Form.Item
             label="Number"
             name="number"
-            rules={[{ required: true, message: "Please enter table's number!" }]}
+            rules={[
+              { required: true, message: "Please enter table's number!" },
+            ]}
             style={{ flex: 1 }}
           >
             <Input placeholder="Enter number" />
@@ -40,15 +65,12 @@ const AddTable = (props) => {
           <Form.Item
             label="Capacity"
             name="capacity"
-            rules={[{ required: true, message: "Please enter table's capacity!" }]}
+            rules={[
+              { required: true, message: "Please enter table's capacity!" },
+            ]}
             style={{ flex: 1 }}
           >
-            <InputNumber
-            min={1}
-            defaultValue={1}
-            onChange={onChange}
-            style={{ width: "100%" }}
-          />
+            <InputNumber min={1} style={{ width: "100%" }} />
           </Form.Item>
         </div>
 
@@ -56,38 +78,31 @@ const AddTable = (props) => {
           <Form.Item
             label="Location"
             name="location"
-            rules={[{ required: true, message: "Please select table's location!!" }]}
+            rules={[
+              { required: true, message: "Please select table's location!!" },
+            ]}
             style={{ flex: 1 }}
           >
             <Select>
-            <Select.Option value="A">Floor A</Select.Option>
-            <Select.Option value="B">Floor B</Select.Option>
-            <Select.Option value="C">Floor C</Select.Option>
-          </Select>
+              <Select.Option value="Floor A">Floor A</Select.Option>
+              <Select.Option value="Floor B">Floor B</Select.Option>
+              <Select.Option value="Floor C">Floor C</Select.Option>
+            </Select>
           </Form.Item>
 
           <Form.Item
             label="Status"
-            name="tag"
+            name="status"
             rules={[{ required: true, message: "Please select a status!" }]}
             style={{ flex: 1 }}
           >
-            <Select>
-            <Select.Option value="Empty">Empty</Select.Option>
-            <Select.Option value="Using">Using</Select.Option>
-            <Select.Option value="Unavaliable">Unavaliable</Select.Option>
-            <Select.Option value="On hold">On hold</Select.Option>
-          </Select>
+            <Select value={statusTable} onChange={handleStatus}>
+              <Select.Option value={3}>Empty</Select.Option>
+              <Select.Option value={2}>Using</Select.Option>
+              <Select.Option value={1}>Unavaliable</Select.Option>
+              <Select.Option value={0}>On hold</Select.Option>
+            </Select>
           </Form.Item>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Confirm
-          </Button>
         </div>
       </Form>
     </Modal>

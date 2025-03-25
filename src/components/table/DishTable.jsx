@@ -11,6 +11,7 @@ const DishTable = () => {
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataDishes, setDataDishes] = useState();
+
   const handleUpdate = (record) => {
     console.log(record);
     setModalUpdate(true);
@@ -69,11 +70,6 @@ const DishTable = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
     },
     {
       title: "Category",

@@ -1,29 +1,75 @@
-import { Col, Divider, Form, Input, Modal, Row } from "antd";
-
+import {
+  App,
+  Col,
+  Divider,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Select,
+} from "antd";
+import { useContext, useEffect, useState } from "react";
+import { getAllDishes } from "../../../api/api";
+import { InputNumber } from "antd";
+import { UserContext } from "../../../context/Context";
 const SubAddMenu2 = (props) => {
-  const { openSubModalUpdate, setOpenSubModalUpdate } = props;
+  const { dishes, setDishes } = useContext(UserContext);
+  const { message, notification } = App.useApp();
+  const [form] = Form.useForm();
+  const { openSubModal, setOpenSubModal } = props;
+  const [data, setData] = useState();
+
   const onFinish = (values) => {
-    console.log("Success:", values);
+    const { name, discount } = values;
+    let data = {
+      name,
+      discount,
+    };
+
+    let parseName = JSON.parse(data.name);
+    var dish = {
+      id: parseName.id,
+      imgUrl: parseName.imageUrl,
+      name: parseName.name,
+      discount: discount,
+    };
+
+    setDishes([...dishes, dish]);
+    setOpenSubModal(false);
+    message.success("Thêm thành công");
+    form.resetFields();
   };
 
-  const handleOk = () => {
-    setOpenSubModalUpdate(false);
+  useEffect(() => {
+    getDishes();
+  }, []);
+
+  const getDishes = async () => {
+    let res = await getAllDishes();
+    if (res) {
+      setData(res);
+    }
   };
 
   const handleCancel = () => {
-    setOpenSubModalUpdate(false);
+    setOpenSubModal(false);
+    form.resetFields();
   };
 
   return (
     <Modal
       title="Add dish to menu"
-      open={openSubModalUpdate}
-      onOk={handleOk}
+      open={openSubModal}
+      onOk={() => {
+        form.submit();
+      }}
       onCancel={handleCancel}
       width={700}
     >
       <Divider></Divider>
       <Form
+        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -49,7 +95,14 @@ const SubAddMenu2 = (props) => {
                 },
               ]}
             >
-              <Input placeholder="Enter name" />
+              <Select>
+                {data &&
+                  data.map((dish) => (
+                    <Select.Option key={dish.id} value={JSON.stringify(dish)}>
+                      {dish.name}
+                    </Select.Option>
+                  ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -63,7 +116,7 @@ const SubAddMenu2 = (props) => {
                 },
               ]}
             >
-              <Input placeholder="Enter discount" />
+              <InputNumber min={0} style={{ width: "100%" }} />
             </Form.Item>
           </Col>
         </Row>

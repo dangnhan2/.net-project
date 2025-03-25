@@ -6,7 +6,7 @@ const UpdateCustomer = (props) => {
   const { message, notification } = App.useApp();
   const [form] = Form.useForm();
   const { modalUpdate, setModalUpdate, dataRecord, getCustomer } = props;
-  const [genderChange, setGenderChange] = useState();
+  const [genderChange, setGender] = useState();
   console.log(dataRecord);
 
   const onFinish = async (values) => {
@@ -25,7 +25,6 @@ const UpdateCustomer = (props) => {
       message.success("Cập nhật thành công");
       setModalUpdate(false);
       getCustomer();
-      form.resetFields();
     } else {
       notification.error({
         message: "Có lỗi xảy ra",
@@ -40,28 +39,19 @@ const UpdateCustomer = (props) => {
   };
 
   const handleGenderChange = (value) => {
-    const genderNumber =
-      value === "Male"
-        ? 0
-        : value === "Female"
-        ? 1
-        : value === "Other"
-        ? 2
-        : null;
+    if (value === 0) setGender(0);
 
-    setGenderChange(genderNumber);
+    if (value === 1) setGender(1);
+
+    if (value === 2) setGender(2);
   };
 
   useEffect(() => {
     if (dataRecord) {
-      const genderString =
-        dataRecord.gender === 0
-          ? "Male"
-          : dataRecord.gender === 1
-          ? "Female"
-          : dataRecord.gender === 2
-          ? "Other"
-          : undefined;
+      let gender;
+      if (dataRecord.gender === 0) gender = "Male";
+      if (dataRecord.gender === 1) gender = "Female";
+      if (dataRecord.gender === 2) gender = "Other";
 
       form.setFieldsValue({
         id: dataRecord.id,
@@ -69,11 +59,9 @@ const UpdateCustomer = (props) => {
         phoneNo: dataRecord.phoneNo,
         email: dataRecord.email,
         address: dataRecord.address,
-        gender: genderString,
+        gender: gender,
         note: dataRecord.note,
       });
-
-      setGenderChange(genderString);
     }
   }, [dataRecord]);
 
@@ -153,9 +141,9 @@ const UpdateCustomer = (props) => {
             value={genderChange}
             onChange={handleGenderChange}
           >
-            <Select.Option value="Male">Male</Select.Option>
-            <Select.Option value="Female">Female</Select.Option>
-            <Select.Option value="Other">Other</Select.Option>
+            <Select.Option value={0}>Male</Select.Option>
+            <Select.Option value={1}>Female</Select.Option>
+            <Select.Option value={2}>Other</Select.Option>
           </Select>
         </Form.Item>
 

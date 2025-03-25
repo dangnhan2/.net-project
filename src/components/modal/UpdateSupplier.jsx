@@ -1,11 +1,32 @@
-import { Divider, Form, Input, Modal, Button } from "antd";
+import { App, Divider, Form, Input, Modal } from "antd";
 import { useEffect } from "react";
+import { updateSupplier } from "../../api/api";
 const UpdateSupplier = (props) => {
+  const { message, notification } = App.useApp();
   const [form] = Form.useForm();
-  const { modalUpdate, setModalUpdate, dataRecord } = props;
+  const { modalUpdate, setModalUpdate, dataRecord, getSuppliers } = props;
   console.log(dataRecord);
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (values) => {
+    const { id, name, phoneNo, email, address, representative } = values;
+    let res = await updateSupplier(
+      id,
+      name,
+      phoneNo,
+      address,
+      representative,
+      email
+    );
+    if (res) {
+      message.success(res.message);
+      getSuppliers();
+      setModalUpdate(false);
+    } else {
+      notification.error({
+        message: "Cập nhật thất bại",
+        description: "Có lỗi đã xảy ra",
+        duration: 3,
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -17,7 +38,8 @@ const UpdateSupplier = (props) => {
       form.setFieldsValue({
         id: dataRecord.id,
         name: dataRecord.name,
-        phone: dataRecord.phone,
+        phoneNo: dataRecord.phoneNo,
+        email: dataRecord.email,
         address: dataRecord.address,
         representative: dataRecord.representative,
       });
@@ -29,7 +51,9 @@ const UpdateSupplier = (props) => {
       title="Edit Supplier"
       open={modalUpdate}
       onCancel={handleCancel}
-      footer={null}
+      onOk={() => {
+        form.submit();
+      }}
       width={600}
     >
       <Divider />
@@ -37,13 +61,20 @@ const UpdateSupplier = (props) => {
         name="supplierForm"
         layout="vertical"
         onFinish={onFinish}
+        form={form}
         autoComplete="off"
       >
         <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item label="Id" name="id" style={{ flex: 1 }} hidden>
+            <Input />
+          </Form.Item>
+
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Please enter supplier's name!" }]}
+            rules={[
+              { required: true, message: "Please enter supplier's name!" },
+            ]}
             style={{ flex: 1 }}
           >
             <Input />
@@ -51,7 +82,7 @@ const UpdateSupplier = (props) => {
 
           <Form.Item
             label="Phone Number"
-            name="phone"
+            name="phoneNo"
             rules={[{ required: true, message: "Please enter phone number!" }]}
             style={{ flex: 1 }}
           >
@@ -63,7 +94,13 @@ const UpdateSupplier = (props) => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Please enter a valid email!",
+              },
+            ]}
             style={{ flex: 1 }}
           >
             <Input />
@@ -80,23 +117,16 @@ const UpdateSupplier = (props) => {
         </div>
 
         <div style={{ display: "flex", gap: "16px" }}>
-        <Form.Item
+          <Form.Item
             label="Representative"
             name="representative"
-            rules={[{ required: true, message: "Please enter a representative!" }]}
+            rules={[
+              { required: true, message: "Please enter a representative!" },
+            ]}
             style={{ flex: 1 }}
           >
             <Input />
           </Form.Item>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-          <Button onClick={handleCancel} style={{ backgroundColor: "red", color: "white" }}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Confirm
-          </Button>
         </div>
       </Form>
     </Modal>

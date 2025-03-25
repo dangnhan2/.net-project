@@ -1,19 +1,76 @@
-import { Button, Space, Table, Tag, Input } from "antd";
+import { Button, Space, Table, Tag, Input, Popconfirm, App } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import UpdateSupplier from "../modal/UpdateSupplier";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddSupplier from "../modal/AddSupplier";
+import { deleteSupplier, getAllSuppliers } from "../../api/api";
 const { Search } = Input;
 const SupplierTable = () => {
+  const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
+  const [dataSuppliers, setDataSuppliers] = useState();
+  const [sort, setSort] = useState("?name=DESC");
+  const [name, setName] = useState();
+
+  console.log(sort);
 
   const handleUpdate = (record) => {
-    // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
+
+  const handleSearch = (e) => {
+    setName(e.target.value);
+  };
+
+  useEffect(() => {
+    getSuppliers();
+  }, [name, sort]);
+
+  const getSuppliers = async () => {
+    let query = sort;
+
+    if (name) {
+      query = `?supplierName=${name}`;
+    }
+
+    let res = await getAllSuppliers(query);
+    if (res) {
+      setDataSuppliers(res.data);
+    }
+  };
+
+  const confirm = async (record, e) => {
+    let res = await deleteSupplier(record.id);
+    if (res) {
+      message.success(res.message);
+      getSuppliers();
+    } else {
+      notification.error({
+        message: "Có lỗi đã xảy ra",
+        description: "Xóa nhà cung cấp thất bại",
+        duration: 3,
+      });
+    }
+  };
+  const cancel = (e) => {
+    // console.log(e);
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log(sorter);
+    let query = "";
+    if (sorter && sorter !== undefined) {
+      query =
+        sorter.order == "ascend"
+          ? `?${sorter.field}=ASC`
+          : `?${sorter.field}=DESC`;
+    }
+    setSort(query);
+  };
+
   const columns = [
     {
       title: "ID",
@@ -24,12 +81,12 @@ const SupplierTable = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // render: (text) => <a>{text}</a>,
+      sorter: true,
     },
     {
       title: "Phone No",
-      dataIndex: "phone",
-      key: "phone",
+      dataIndex: "phoneNo",
+      key: "phoneNo",
     },
     {
       title: "Address",
@@ -51,85 +108,25 @@ const SupplierTable = () => {
             <Button onClick={() => handleUpdate(record)}>
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
-            <Button>
-              <FaRegTrashAlt style={{ color: "#F38177" }} />
-            </Button>
+            <Popconfirm
+              title="Xóa nhà cung cấp"
+              description="Bạn có muốn xóa nhà cung cấp này ?"
+              placement="bottomRight"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => confirm(record)}
+              onCancel={cancel}
+            >
+              <Button>
+                <FaRegTrashAlt style={{ color: "#F38177" }} />
+              </Button>
+            </Popconfirm>
           </div>
         </>
       ),
     },
-    // {
-    //   title: "Tags",
-    //   key: "tags",
-    //   dataIndex: "tags",
-    //   render: (_, { tags }) => (
-    //     <>
-    //       {tags.map((tag) => {
-    //         let color = tag.length > 5 ? "geekblue" : "green";
-    //         if (tag === "loser") {
-    //           color = "volcano";
-    //         }
-    //         return (
-    //           <Tag color={color} key={tag}>
-    //             {tag.toUpperCase()}
-    //           </Tag>
-    //         );
-    //       })}
-    //     </>
-    //   ),
-    // },
   ];
-  const data = [
-    {
-      id: "01",
-      name: "John Doe",
-      phone: "0123456789",
-      address: "New York No. 1 Lake Park",
-      representative: "John Doe",
-    },
-    {
-      id: "02",
-      name: "John Doe",
-      phone: "0123456789",
-      address: "New York No. 1 Lake Park",
-      representative: "John Doe",
-    },
-    {
-      id: "02",
-      name: "John Doe",
-      phone: "0123456789",
-      address: "New York No. 1 Lake Park",
-      representative: "John Doe",
-    },
-    {
-      id: "03",
-      name: "John Doe",
-      phone: "0123456789",
-      address: "New York No. 1 Lake Park",
-      representative: "John Doe",
-    },
-    // {
-    //   key: "1",
-    //   name: "John Brown",
-    //   age: 32,
-    //   address: "New York No. 1 Lake Park",
-    //   tags: ["nice", "developer"],
-    // },
-    // {
-    //   key: "2",
-    //   name: "Jim Green",
-    //   age: 42,
-    //   address: "London No. 1 Lake Park",
-    //   tags: ["loser"],
-    // },
-    // {
-    //   key: "3",
-    //   name: "Joe Black",
-    //   age: 32,
-    //   address: "Sydney No. 1 Lake Park",
-    //   tags: ["cool", "teacher"],
-    // },
-  ];
+
   const render = () => {
     return (
       <div
@@ -141,7 +138,13 @@ const SupplierTable = () => {
       >
         <h2>Supplier</h2>
         <div>
-          <Search placeholder="Search" allowClear style={{ width: 500 }} />
+          <Search
+            placeholder="Search"
+            allowClear
+            style={{ width: 500 }}
+            value={name}
+            onChange={handleSearch}
+          />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
           <FaPlus /> Add
@@ -153,17 +156,23 @@ const SupplierTable = () => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={dataSuppliers}
         title={render}
+        onChange={handleTableChange}
         pagination={{
           position: ["bottomCenter"],
         }}
       />
-      <AddSupplier modalAdd={modalAdd} setModalAdd={setModalAdd}></AddSupplier>
+      <AddSupplier
+        modalAdd={modalAdd}
+        setModalAdd={setModalAdd}
+        getSuppliers={getSuppliers}
+      ></AddSupplier>
       <UpdateSupplier
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
+        getSuppliers={getSuppliers}
       ></UpdateSupplier>
     </>
   );
