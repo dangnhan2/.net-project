@@ -119,8 +119,8 @@ const MenuTable = () => {
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
             <Popconfirm
-              title="Xóa menu"
-              description="Bạn có muốn xóa menu này ?"
+              title="Delete menu"
+              description="Do you want to delete this menu ?"
               placement="bottomRight"
               okText="Yes"
               cancelText="No"

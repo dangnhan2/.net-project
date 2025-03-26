@@ -49,12 +49,6 @@ const T_Table = () => {
     if (res) {
       message.success(res.message);
       getTables();
-    } else {
-      notification.error({
-        message: "Có lỗi đã xảy ra",
-        description: "Xóa bàn thất bại",
-        duration: 3,
-      });
     }
   };
 
@@ -148,8 +142,8 @@ const T_Table = () => {
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
             <Popconfirm
-              title="Xóa bàn"
-              description="Bạn có muốn xóa bàn này ?"
+              title="Delete table"
+              description="Do you want to delete this table ?"
               placement="bottomRight"
               okText="Yes"
               cancelText="No"

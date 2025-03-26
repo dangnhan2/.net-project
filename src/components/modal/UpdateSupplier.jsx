@@ -16,14 +16,17 @@ const UpdateSupplier = (props) => {
       representative,
       email
     );
-    if (res) {
+    console.log(res);
+
+    if (res && res.statusCode === 200) {
       message.success(res.message);
       getSuppliers();
       setModalUpdate(false);
     } else {
+      const errorMessage = Object.values(res).flat();
       notification.error({
-        message: "Cập nhật thất bại",
-        description: "Có lỗi đã xảy ra",
+        message: "Action Failed",
+        description: errorMessage,
         duration: 3,
       });
     }

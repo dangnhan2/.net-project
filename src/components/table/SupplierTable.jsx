@@ -109,8 +109,8 @@ const SupplierTable = () => {
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
             <Popconfirm
-              title="Xóa nhà cung cấp"
-              description="Bạn có muốn xóa nhà cung cấp này ?"
+              title="Delete Supplier"
+              description="Do you want to delete this supplier ?"
               placement="bottomRight"
               okText="Yes"
               cancelText="No"

@@ -9,14 +9,15 @@ const AddSupplier = (props) => {
   const onFinish = async (values) => {
     const { name, phoneNo, email, address, representative } = values;
     let res = await addSupplier(name, phoneNo, address, representative, email);
-    if (res) {
+    if (res && res.statusCode === 201) {
       message.success(res.message);
       getSuppliers();
       setModalAdd(false);
     } else {
+      const errorMessage = Object.values(res).flat();
       notification.error({
-        message: "Có lỗi xảy ra",
-        description: "Thêm giữ liệu thất bại",
+        message: "Action Failed",
+        description: errorMessage,
         duration: 3,
       });
     }

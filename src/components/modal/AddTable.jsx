@@ -10,15 +10,16 @@ const AddTable = (props) => {
   const onFinish = async (values) => {
     const { number, capacity, location, status } = values;
     let res = await addTable(number, capacity, location, statusTable);
-    if (res) {
+    if (res && res.statusCode === 201) {
       message.success(res.message);
       setModalAdd(false);
       getTables();
       form.resetFields();
     } else {
+      const errorMessage = Object.values(res).flat();
       notification.error({
-        message: "Có lỗi đã xảy ra",
-        description: "Thêm bàn thất bại",
+        message: "Action Failed",
+        description: errorMessage,
         duration: 3,
       });
     }

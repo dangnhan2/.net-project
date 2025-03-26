@@ -19,9 +19,10 @@ const UpdateMenu = (props) => {
       setModalUpdate(false);
       getMenus();
     } else {
+      const errorMessage = Object.values(res).flat();
       notification.error({
-        message: "Cập nhật thất bại",
-        description: "Có lỗi đã xảy ra",
+        message: "Action Failed",
+        description: errorMessage,
         duration: 3,
       });
     }

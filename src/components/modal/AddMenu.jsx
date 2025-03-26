@@ -20,9 +20,10 @@ const AddMenu = (props) => {
       setModalAdd(false);
       getMenus();
     } else {
+      const errorMessage = Object.values(res).flat();
       notification.error({
-        message: "Thêm mới thất bại",
-        description: "Có lỗi xảy ra",
+        message: "Action Failed",
+        description: errorMessage,
         duration: 3,
       });
     }
@@ -106,7 +107,6 @@ const AddMenu = (props) => {
               rules={[
                 {
                   required: true,
-                  //   message: "Please input your address!",
                 },
               ]}
             >
