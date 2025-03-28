@@ -9,10 +9,13 @@ const AddSupplier = (props) => {
   const onFinish = async (values) => {
     const { name, phoneNo, email, address, representative } = values;
     let res = await addSupplier(name, phoneNo, address, representative, email);
+    console.log(res);
+
     if (res && res.statusCode === 201) {
       message.success(res.message);
       getSuppliers();
       setModalAdd(false);
+      form.resetFields();
     } else {
       const errorMessage = Object.values(res).flat();
       notification.error({

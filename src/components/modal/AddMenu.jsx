@@ -6,6 +6,8 @@ import { addMenu } from "../../api/api";
 
 const AddMenu = (props) => {
   const { dishes, setDishes } = useContext(UserContext);
+  console.log(dishes);
+
   const [form] = Form.useForm();
 
   const { modalAdd, setModalAdd, getMenus } = props;

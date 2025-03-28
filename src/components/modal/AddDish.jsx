@@ -34,15 +34,19 @@ const AddDish = (props) => {
       description,
       fileList[0].originFileObj
     );
-    if (res) {
+
+    console.log(res);
+
+    if (res && res.statusCode === 201) {
       setFileList([]);
-      message.success("Thêm thành công");
+      message.success(res.message);
       getDishes();
       setModalAdd(false);
     } else {
+      var errorMessage = Object.values(res.message).flat();
       notification.error({
-        message: "Có lỗi đã xảy ra",
-        description: "Thêm món ăn thất bại",
+        message: "Action Failed",
+        description: errorMessage,
         duration: 3,
       });
     }

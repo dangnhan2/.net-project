@@ -11,7 +11,7 @@ const SupplierTable = () => {
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataSuppliers, setDataSuppliers] = useState();
-  const [sort, setSort] = useState("?name=DESC");
+  const [sort, setSort] = useState("name=DESC");
   const [name, setName] = useState();
 
   console.log(sort);
@@ -33,7 +33,7 @@ const SupplierTable = () => {
     let query = sort;
 
     if (name) {
-      query = `?supplierName=${name}`;
+      query = `supplierName=${name}&${sort}`;
     }
 
     let res = await getAllSuppliers(query);
@@ -65,8 +65,8 @@ const SupplierTable = () => {
     if (sorter && sorter !== undefined) {
       query =
         sorter.order == "ascend"
-          ? `?${sorter.field}=ASC`
-          : `?${sorter.field}=DESC`;
+          ? `${sorter.field}=ASC`
+          : `${sorter.field}=DESC`;
     }
     setSort(query);
   };

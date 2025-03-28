@@ -11,6 +11,7 @@ import DishTable from "./components/table/DishTable";
 import OrderTable from "./components/table/OrderTable";
 import BillTable from "./components/table/BillTable";
 import MenuTable from "./components/table/MenuTable";
+import ShiftTable from "./components/table/ShiftTable";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: "/employee",
         element: <EmployeeTable />,
+      },
+      {
+        path: "/shift",
+        element: <ShiftTable></ShiftTable>,
       },
     ],
   },

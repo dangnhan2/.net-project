@@ -1,7 +1,7 @@
 import axios from "../api/customize";
 
-export const getAllCustomer = () => {
-  return axios.get(`Customers/GetAllCustomers`);
+export const getAllCustomer = (query) => {
+  return axios.get(`Customers/GetAllCustomers?${query}`);
 };
 
 export const addCustomer = (
@@ -45,8 +45,8 @@ export const deleteCustomer = (id) => {
   return axios.delete(`Customers/DeleteCustomer/${id}`);
 };
 
-export const getAllDishes = () => {
-  return axios.get(`Dishes/GetAllDishes`);
+export const getAllDishes = (query) => {
+  return axios.get(`Dishes/GetAllDishes?${query}`);
 };
 
 export const addDish = (name, category, price, description, image) => {
@@ -82,7 +82,7 @@ export const deleteDish = (id) => {
 };
 
 export const getAllSuppliers = (query) => {
-  return axios.get(`Suppliers/GetAllSuppliers${query}`);
+  return axios.get(`Suppliers/GetAllSuppliers?${query}`);
 };
 
 export const addSupplier = (name, phoneNo, address, representative, email) => {
@@ -117,7 +117,7 @@ export const deleteSupplier = (id) => {
 };
 
 export const getAllTables = (query) => {
-  return axios.get(`Tables/GetAllTables${query}`);
+  return axios.get(`Tables/GetAllTables?${query}`);
 };
 
 export const addTable = (number, capacity, location, status) => {
@@ -143,7 +143,7 @@ export const deleteTable = (id) => {
 };
 
 export const getAllMenus = (query) => {
-  return axios.get(`Menu/GetAllMenus${query}`);
+  return axios.get(`Menu/GetAllMenus?${query}`);
 };
 
 export const updateMenu = (id, name, status, description, dishes) => {
@@ -166,4 +166,8 @@ export const addMenu = (name, status, description, dishes) => {
 
 export const deleteMenu = (id) => {
   return axios.delete(`Menu/DeleteMenu/${id}`);
+};
+
+export const login = (email, password) => {
+  return axios.post(`Authentication/login-user`, { email, password });
 };

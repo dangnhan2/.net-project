@@ -12,18 +12,32 @@ const CustomerTable = () => {
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataCustomer, setDataCustomer] = useState([]);
+  const [dataSorter, setSort] = useState("fullName=DESC");
+  const [dataSearch, setDataSearch] = useState();
   const handleUpdate = (record) => {
     // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
 
+  const handleSearch = (e) => {
+    // console.log(e.target.value);
+
+    setDataSearch(e.target.value);
+  };
+
   useEffect(() => {
     getCustomer();
-  }, []);
+  }, [dataSearch, dataSorter]);
 
   const getCustomer = async () => {
-    let data = await getAllCustomer();
+    let query = dataSorter;
+
+    if (dataSearch) {
+      query = `customerName=${dataSearch}&${dataSorter}`;
+    }
+
+    let data = await getAllCustomer(query);
     if (data) {
       setDataCustomer(data.data);
       console.log(data);
@@ -48,6 +62,17 @@ const CustomerTable = () => {
     // console.log(e);
   };
 
+  const handleTableChange = (pagination, filters, sorter) => {
+    let query = "";
+    if (sorter && sorter !== undefined) {
+      query =
+        sorter.order == "ascend"
+          ? `${sorter.field}=ASC`
+          : `${sorter.field}=DESC`;
+    }
+    setSort(query);
+  };
+
   const columns = [
     {
       title: "ID",
@@ -58,6 +83,7 @@ const CustomerTable = () => {
       title: "Full Name",
       dataIndex: "fullName",
       key: "fullName",
+      sorter: true,
     },
     {
       title: "Phone No",
@@ -109,7 +135,13 @@ const CustomerTable = () => {
       >
         <h2>Customer</h2>
         <div>
-          <Search placeholder="Search" allowClear style={{ width: 500 }} />
+          <Search
+            placeholder="Search"
+            allowClear
+            style={{ width: 500 }}
+            value={dataSearch}
+            onChange={handleSearch}
+          />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
           <FaPlus /> Add
@@ -122,6 +154,7 @@ const CustomerTable = () => {
       <Table
         columns={columns}
         dataSource={dataCustomer}
+        onChange={handleTableChange}
         title={render}
         pagination={{
           position: ["bottomCenter"],

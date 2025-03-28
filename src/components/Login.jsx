@@ -1,15 +1,38 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { App, Button, Checkbox, Form, Input } from "antd";
 import "../style/app.form.scss";
 import background from "../img/background.jpg";
+import { useNavigate } from "react-router-dom";
+import { login } from "../api/api";
+import { UserContext } from "../context/Context";
+import { useContext } from "react";
 
 const Login = () => {
-  console.log(import.meta.env.VITE_BACKEND_URL);
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const { user, setUser, isAuthenticated, setIsAuthenticated } =
+    useContext(UserContext);
+
+  const { message, notification } = App.useApp();
+  const navigate = useNavigate();
+  // console.log(import.meta.env.VITE_BACKEND_URL);
+
+  const onFinish = async (values) => {
+    const { email, password } = values;
+    let res = await login(email, password);
+    console.log(res.message);
+
+    if (res && res.token) {
+      localStorage.setItem("access_token", res.token);
+      setIsAuthenticated(true);
+      message.success("Login succeed");
+      navigate("/");
+    } else {
+      notification.error({
+        message: "Login failed",
+        description: res.message,
+        duration: 3,
+      });
+    }
   };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+
   return (
     <div
       className="container"
@@ -37,16 +60,15 @@ const Login = () => {
               remember: true,
             }}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
               label="Username"
-              name="username"
+              name="email"
               rules={[
                 {
                   required: true,
-                  message: "Please input your username!",
+                  message: "Please input your email!",
                 },
               ]}
             >

@@ -37,14 +37,14 @@ const UpdateDish = (props) => {
       description,
       fileList[0].originFileObj
     );
-    if (res) {
-      message.success("Cập nhật thành công");
+    if (res && res.statusCode === 200) {
+      message.success(res.message);
       getDishes();
       setModalUpdate(false);
     } else {
       notification.error({
-        message: "Có lỗi đã xảy ra",
-        description: "Cập nhật thất bại",
+        message: "Action Failed",
+        description: res.message,
         duration: 3,
       });
     }

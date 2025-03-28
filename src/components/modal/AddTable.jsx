@@ -10,6 +10,8 @@ const AddTable = (props) => {
   const onFinish = async (values) => {
     const { number, capacity, location, status } = values;
     let res = await addTable(number, capacity, location, statusTable);
+    console.log(res);
+
     if (res && res.statusCode === 201) {
       message.success(res.message);
       setModalAdd(false);
@@ -19,7 +21,7 @@ const AddTable = (props) => {
       const errorMessage = Object.values(res).flat();
       notification.error({
         message: "Action Failed",
-        description: errorMessage,
+        description: errorMessage || errorMessage.message,
         duration: 3,
       });
     }

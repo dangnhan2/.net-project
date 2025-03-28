@@ -12,7 +12,7 @@ const T_Table = () => {
   const [dataRecord, setDataRecord] = useState();
   const [dataTable, setDataTable] = useState();
   const [dataSearch, setDataSearch] = useState();
-  const [sort, setSort] = useState("?capacity=DESC");
+  const [sort, setSort] = useState("capacity=DESC");
   console.log(sort);
 
   const handleUpdate = (record) => {
@@ -29,13 +29,10 @@ const T_Table = () => {
   }, [dataSearch, sort]);
 
   const getTables = async () => {
-    let query = "";
+    let query = sort;
 
-    if (sort) {
-      query = sort;
-    }
     if (dataSearch) {
-      query = `?tableNumber=${dataSearch}`;
+      query = `tableNumber=${dataSearch}&${sort}`;
     }
 
     let res = await getAllTables(query);
@@ -62,8 +59,8 @@ const T_Table = () => {
     if (sorter && sorter !== undefined) {
       query =
         sorter.order == "ascend"
-          ? `?${sorter.field}=ASC`
-          : `?${sorter.field}=DESC`;
+          ? `${sorter.field}=ASC`
+          : `${sorter.field}=DESC`;
     }
     setSort(query);
   };

@@ -7,11 +7,14 @@ const UpdateTable = (props) => {
   const { message, notification } = App.useApp();
   const { modalUpdate, setModalUpdate, dataRecord, getTables } = props;
   const [statusTable, setStatusTable] = useState();
+  console.log(dataRecord);
 
   const onFinish = async (values) => {
     const { id, number, capacity, location, status } = values;
     let res = await updateTable(id, number, capacity, location, statusTable);
-    if (res) {
+    console.log(res);
+
+    if (res && res.statusCode === 200) {
       message.success("Cập nhật thành công");
       getTables();
       setModalUpdate(false);

@@ -1,21 +1,12 @@
-import {
-  App,
-  Col,
-  Divider,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Select,
-} from "antd";
+import { App, Col, Divider, Form, Modal, Row, Select } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { getAllDishes } from "../../../api/api";
 import { InputNumber } from "antd";
 import { UserContext } from "../../../context/Context";
 const SubAddMenu2 = (props) => {
   const { dishes, setDishes } = useContext(UserContext);
-  const { message, notification } = App.useApp();
+
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const { openSubModal, setOpenSubModal } = props;
   const [data, setData] = useState();
@@ -37,7 +28,7 @@ const SubAddMenu2 = (props) => {
 
     setDishes([...dishes, dish]);
     setOpenSubModal(false);
-    message.success("Thêm thành công");
+    message.success("Action Succeed");
     form.resetFields();
   };
 
@@ -47,8 +38,8 @@ const SubAddMenu2 = (props) => {
 
   const getDishes = async () => {
     let res = await getAllDishes();
-    if (res) {
-      setData(res);
+    if (res && res.statusCode === 200) {
+      setData(res.data);
     }
   };
 

@@ -30,16 +30,17 @@ const AddCustomer = (props) => {
     console.log(data);
     console.log(gender);
 
-    if (data) {
-      message.success("Thêm thành công");
+    if (data && data.statusCode === 201) {
+      message.success(data.message);
       getCustomer();
       setModalAdd(false);
-      // setGender(null);
+
       form.resetFields();
     } else {
+      var errorMessage = Object.values(data).flat().join("\n");
       notification.error({
-        message: "Có lỗi đã xảy ra",
-        description: "Thêm thất bại",
+        message: "Action failed",
+        description: errorMessage,
         duration: 4,
       });
     }
@@ -116,7 +117,7 @@ const AddCustomer = (props) => {
 
         <Form.Item
           label="Gender"
-          // name="gen"
+          name="gen"
           rules={[{ required: true, message: "Please choose gender!" }]}
         >
           <Select

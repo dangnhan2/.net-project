@@ -127,7 +127,7 @@ const LayoutAdmin = () => {
             {
               key: "10",
               icon: <SlCalender />,
-              label: <Link>Shift</Link>,
+              label: <Link to="/shift">Shift</Link>,
             },
           ]}
         />

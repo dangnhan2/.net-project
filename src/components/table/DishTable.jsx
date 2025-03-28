@@ -11,6 +11,8 @@ const DishTable = () => {
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataDishes, setDataDishes] = useState();
+  const [dataSort, setSort] = useState("price=DESC");
+  const [dataSearch, setSearch] = useState("");
 
   const handleUpdate = (record) => {
     console.log(record);
@@ -18,14 +20,35 @@ const DishTable = () => {
     setDataRecord(record);
   };
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    let query = "";
+    if (sorter && sorter !== undefined) {
+      query =
+        sorter.order == "ascend"
+          ? `${sorter.field}=ASC`
+          : `${sorter.field}=DESC`;
+    }
+    setSort(query);
+  };
+
   useEffect(() => {
     getDishes();
-  }, []);
+  }, [dataSort, dataSearch]);
 
   const getDishes = async () => {
-    let res = await getAllDishes();
-    if (res) {
-      setDataDishes(res);
+    let query = dataSort;
+
+    if (dataSearch) {
+      query = `dishName=${dataSearch}&${dataSort}`;
+    }
+
+    let res = await getAllDishes(query);
+    if (res && res.statusCode === 200) {
+      setDataDishes(res.data);
     }
   };
 
@@ -80,6 +103,7 @@ const DishTable = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      sorter: true,
     },
     {
       title: "Action",
@@ -120,7 +144,13 @@ const DishTable = () => {
       >
         <h2>Dish</h2>
         <div>
-          <Search placeholder="Search" allowClear style={{ width: 500 }} />
+          <Search
+            placeholder="Search"
+            allowClear
+            style={{ width: 500 }}
+            value={dataSearch}
+            onChange={handleSearch}
+          />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
           <FaPlus /> Add
@@ -134,6 +164,7 @@ const DishTable = () => {
         columns={columns}
         dataSource={dataDishes}
         title={render}
+        onChange={handleTableChange}
         pagination={{
           position: ["bottomCenter"],
         }}

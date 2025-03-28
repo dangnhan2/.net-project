@@ -14,7 +14,7 @@ const MenuTable = () => {
   const [dataRecord, setDataRecord] = useState();
   const [dataSearch, setDataSearch] = useState();
   const [dataMenu, setDataMenu] = useState();
-  const [dataSort, setSort] = useState(`?status=DESC`);
+  const [dataSort, setSort] = useState(`status=DESC`);
 
   const handleUpdate = (record) => {
     console.log(record);
@@ -35,7 +35,7 @@ const MenuTable = () => {
     let query = dataSort;
 
     if (dataSearch) {
-      query = `?name=${dataSearch}`;
+      query = `name=${dataSearch}&${dataSort}`;
     }
 
     let res = await getAllMenus(query);
