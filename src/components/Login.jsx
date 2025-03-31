@@ -1,6 +1,7 @@
 import { App, Button, Checkbox, Form, Input } from "antd";
 import "../style/app.form.scss";
 import background from "../img/background.jpg";
+import logo from "../img/MadoCoffeeLogo.png";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/api";
 import { UserContext } from "../context/Context";
@@ -46,9 +47,14 @@ const Login = () => {
       }}
     >
       <div className="container-form">
+      <img 
+    src={logo}  
+    alt="Mado Coffee Logo"
+    style={{ width: "250px", marginBottom: "10px", display: "block", margin: "0 auto" }} 
+/>
         <h2 className="sign">Sign in</h2>
         <div style={{ color: "#58595A" }}>
-          Please enter your account and password to continue
+          
         </div>
         <div>
           <Form
@@ -106,7 +112,7 @@ const Login = () => {
                   width: "80%",
                 }}
               >
-                Submit
+                Sign in
               </Button>
             </Form.Item>
           </Form>
