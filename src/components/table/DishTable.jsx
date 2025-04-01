@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import AddDish from "../modal/AddDish";
 import UpdateDish from "../modal/UpdateDish";
 import { deleteDish, getAllDishes } from "../../api/api";
+import DishView from "../modal/view/DishView";
 const { Search } = Input;
 const DishTable = () => {
   const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataDishes, setDataDishes] = useState();
   const [dataSort, setSort] = useState("price=DESC");
@@ -75,6 +77,11 @@ const DishTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
 
     {
@@ -85,7 +92,7 @@ const DishTable = () => {
         <img
           src={`${import.meta.env.VITE_IMAGE_URL}images/${record.imageUrl}`}
           alt={record.dish}
-          style={{ height: "10%", width: "15%" }}
+          style={{ width: 100 }}
         />
       ),
     },
@@ -180,6 +187,11 @@ const DishTable = () => {
         dataRecord={dataRecord}
         getDishes={getDishes}
       ></UpdateDish>
+      <DishView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></DishView>
     </>
   );
 };

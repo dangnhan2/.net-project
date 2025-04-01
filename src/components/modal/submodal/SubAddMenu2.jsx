@@ -24,6 +24,7 @@ const SubAddMenu2 = (props) => {
       imgUrl: parseName.imageUrl,
       name: parseName.name,
       discount: discount,
+      price: parseName.price - parseName.price * discount,
     };
 
     setDishes([...dishes, dish]);

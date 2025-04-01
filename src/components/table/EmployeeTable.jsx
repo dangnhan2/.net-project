@@ -1,18 +1,54 @@
-import { Button, Space, Table, Tag, Input } from "antd";
+import { Button, Space, Table, Tag, Input, Popconfirm, App } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddEmployee from "../modal/AddEmployee";
 import UpdateEmployee from "../modal/UpdateEmployee";
+import { deleteEmployee, getAllEmployee } from "../../api/api";
+import EmployeeView from "../modal/view/EmployeeView";
 const { Search } = Input;
+
 const EmployeeTable = () => {
+  const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
+  const [employees, setEmployees] = useState([]);
 
+  useEffect(() => {
+    getEmployees();
+  }, []);
+
+  const getEmployees = async () => {
+    let res = await getAllEmployee();
+
+    if (res) {
+      setEmployees(res);
+    }
+  };
   const handleUpdate = (record) => {
-    // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
+  };
+
+  const confirm = async (record, e) => {
+    let res = await deleteEmployee(record.id);
+    console.log(res);
+
+    if (res) {
+      message.success(res.message);
+      getEmployees();
+    } else {
+      notification.error({
+        message: "Action failed",
+        description: "Xóa nhà cung cấp thất bại",
+        duration: 3,
+      });
+    }
+  };
+
+  const cancel = (e) => {
+    // console.log(e);
   };
 
   const columns = [
@@ -20,16 +56,21 @@ const EmployeeTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Full Name",
-      dataIndex: "fullname",
-      key: "fullname",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
       title: "Phone No",
-      dataIndex: "phone",
-      key: "phone",
+      dataIndex: "phoneNo",
+      key: "phoneNo",
     },
     {
       title: "Role",
@@ -38,30 +79,25 @@ const EmployeeTable = () => {
     },
     {
       title: "Status",
-      dataIndex: "tags",
-      key: "tags",
-      render: (_, { tags }) => (
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
         <>
-          {tags.map((tag) => {
-            let color;
-            if (tag === "Working") {
-              color = "purple";
+          <Tag
+            color={
+              status === 0 ? "purple" : status === 1 ? "orange" : "default"
             }
-            if (tag === "Lay-off") {
-              color = "warning";
-            }
-            return (
-              <Tag
-                color={color}
-                key={tag}
-                style={{
-                  fontWeight: "bold",
-                }}
-              >
-                {tag}
-              </Tag>
-            );
-          })}
+            style={{
+              fontWeight: "bold",
+              width: "80px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            {status === 0 ? "Working" : status === 1 ? "Lay-off" : "Unknown"}
+          </Tag>
         </>
       ),
     },
@@ -75,44 +111,25 @@ const EmployeeTable = () => {
             <Button onClick={() => handleUpdate(record)}>
               <FaPencilAlt style={{ color: "#646465" }} />
             </Button>
-            <Button>
-              <FaRegTrashAlt style={{ color: "#F38177" }} />
-            </Button>
+            <Popconfirm
+              title="Delete Employee"
+              description="Do you want to delete this employee ?"
+              placement="bottomRight"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => confirm(record)}
+              onCancel={cancel}
+            >
+              <Button>
+                <FaRegTrashAlt style={{ color: "#F38177" }} />
+              </Button>
+            </Popconfirm>
           </div>
         </>
       ),
     },
   ];
-  const data = [
-    {
-      id: "01",
-      fullname: "Sponge Bob",
-      phone: "0123456789",
-      role: "Staff",
-      tags: ["Working"],
-    },
-    {
-      id: "02",
-      fullname: "Steve",
-      phone: "0123456789",
-      role: "Staff",
-      tags: ["Working"],
-    },
-    {
-      id: "03",
-      fullname: "Squarepant",
-      phone: "0123456789",
-      role: "Staff",
-      tags: ["Lay-off"],
-    },
-    {
-      id: "04",
-      fullname: "SeiBob",
-      phone: "0123456789",
-      role: "Manage",
-      tags: ["Working"],
-    },
-  ];
+
   const render = () => {
     return (
       <div
@@ -136,18 +153,28 @@ const EmployeeTable = () => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={employees}
         title={render}
         pagination={{
           position: ["bottomCenter"],
         }}
       />
-      <AddEmployee modalAdd={modalAdd} setModalAdd={setModalAdd}></AddEmployee>
+      <AddEmployee
+        modalAdd={modalAdd}
+        setModalAdd={setModalAdd}
+        getEmployees={getEmployees}
+      ></AddEmployee>
       <UpdateEmployee
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
+        getEmployees={getEmployees}
       ></UpdateEmployee>
+      <EmployeeView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></EmployeeView>
     </>
   );
 };

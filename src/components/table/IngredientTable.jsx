@@ -1,18 +1,31 @@
 import { Button, Space, Table, Tag, Input } from "antd";
 import { FaPencilAlt, FaPlus } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddIngredient from "../modal/AddIngredient";
 import UpdateIngredient from "../modal/UpdateIngredient";
+import { getAllIngredients } from "../../api/api";
 const { Search } = Input;
 const IngredientTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
+  const [ingredients, setIngredients] = useState();
 
   const handleUpdate = (record) => {
     // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
+  };
+
+  useEffect(() => {
+    getIngredients();
+  }, []);
+
+  const getIngredients = async () => {
+    let res = await getAllIngredients();
+    if (res && res.statusCode === 200) {
+      setIngredients(res.data);
+    }
   };
 
   const columns = [
@@ -33,8 +46,8 @@ const IngredientTable = () => {
     },
     {
       title: "Unit Type",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "unitType",
+      key: "unitType",
     },
     {
       title: "Price",
@@ -56,36 +69,7 @@ const IngredientTable = () => {
       ),
     },
   ];
-  const data = [
-    {
-      id: "01",
-      name: "Sugar",
-      quantity: "10",
-      type: "kg",
-      price: "$1",
-    },
-    {
-      id: "02",
-      name: "Salt",
-      quantity: "10",
-      type: "kg",
-      price: "$1.5",
-    },
-    {
-      id: "03",
-      name: "Powdered coffee",
-      quantity: "10",
-      type: "kg",
-      price: "$2.5",
-    },
-    {
-      id: "03",
-      name: "Ice cubes",
-      quantity: "10",
-      type: "kg",
-      price: "$2",
-    },
-  ];
+
   const render = () => {
     return (
       <div
@@ -109,7 +93,7 @@ const IngredientTable = () => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={ingredients}
         title={render}
         pagination={{
           position: ["bottomCenter"],
@@ -118,11 +102,14 @@ const IngredientTable = () => {
       <AddIngredient
         modalAdd={modalAdd}
         setModalAdd={setModalAdd}
+        getIngredients={getIngredients}
       ></AddIngredient>
+
       <UpdateIngredient
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
+        getIngredients={getIngredients}
       ></UpdateIngredient>
     </>
   );

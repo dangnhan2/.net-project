@@ -171,3 +171,133 @@ export const deleteMenu = (id) => {
 export const login = (email, password) => {
   return axios.post(`Authentication/login-user`, { email, password });
 };
+
+export const refresh = (refreshToken) => {
+  return axios.post(`Authentication/refresh-token`, { refreshToken });
+};
+
+export const getDashBoard = () => {
+  return axios.get(`DashBoard/GetDashBoard`);
+};
+
+export const getAllEmployee = () => {
+  return axios.get(`Employees/GetAllEmployees`);
+};
+
+export const addEmployee = (
+  fullName,
+  phoneNo,
+  email,
+  address,
+  gender,
+  status,
+  role
+) => {
+  return axios.post(`Employees/CreateEmployee`, {
+    fullName,
+    phoneNo,
+    email,
+    address,
+    gender,
+    status,
+    role,
+  });
+};
+
+export const updateEmployee = (
+  id,
+  fullName,
+  phoneNo,
+  email,
+  address,
+  gender,
+  status,
+  role
+) => {
+  return axios.put(`Employees/UpdateEmployee/${id}`, {
+    fullName,
+    phoneNo,
+    email,
+    address,
+    gender,
+    status,
+    role,
+  });
+};
+
+export const deleteEmployee = (id) => {
+  return axios.delete(`Employees/DeleteEmployee/${id}`);
+};
+
+export const getAllUnits = () => {
+  return axios.get(`Units/GetAllUnits`);
+};
+
+export const addUnit = (name) => {
+  return axios.post(`Units/CreateUnit`, { name });
+};
+
+export const getAllOrders = (query) => {
+  return axios.get(`Orders/GetAllOrders?${query}`);
+};
+
+export const addOrder = (tableID, customerID, status, total, orderDishes) => {
+  return axios.post(`Orders/AddOrder`, {
+    tableID,
+    customerID,
+    status,
+    total,
+    orderDishes,
+  });
+};
+
+export const updateOrder = (id, status) => {
+  return axios.put(`Orders/UpdateOrder/${id}`, {
+    status,
+  });
+};
+
+export const getAllIngredients = () => {
+  return axios.get(`Ingredients/GetAllIngredients`);
+};
+
+export const addIngredient = (
+  name,
+  quantity,
+  description,
+  price,
+  unitID,
+  unitType,
+  supplierName
+) => {
+  return axios.post(`Ingredients/CreateIngredient`, {
+    name,
+    quantity,
+    description,
+    price,
+    unitID,
+    unitType,
+    supplierName,
+  });
+};
+
+export const updateIngredient = (
+  id,
+  name,
+  quantity,
+  description,
+  price,
+  unitID,
+  unitType,
+  supplierName
+) => {
+  return axios.put(`Ingredients/UpdateIngredient/${id}`, {
+    name,
+    quantity,
+    description,
+    price,
+    unitID,
+    unitType,
+    supplierName,
+  });
+};

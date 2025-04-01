@@ -5,11 +5,11 @@ import { App as Application } from "antd";
 import "./style/global.style.scss";
 import { ContextProvider } from "./context/Context.jsx";
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Application>
-      <ContextProvider>
-        <App />
-      </ContextProvider>
-    </Application>
-  </StrictMode>
+  // <StrictMode>
+  <Application>
+    <ContextProvider>
+      <App />
+    </ContextProvider>
+  </Application>
+  // </StrictMode>
 );

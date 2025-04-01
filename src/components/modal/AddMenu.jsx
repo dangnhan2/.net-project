@@ -20,6 +20,7 @@ const AddMenu = (props) => {
       message.success("Thêm mới thành công");
       setDishes([]);
       setModalAdd(false);
+      form.resetFields();
       getMenus();
     } else {
       const errorMessage = Object.values(res).flat();
@@ -89,7 +90,7 @@ const AddMenu = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please input table!",
+                  message: "Please choose status!",
                 },
               ]}
             >
@@ -109,6 +110,7 @@ const AddMenu = (props) => {
               rules={[
                 {
                   required: true,
+                  message: "Please input description!",
                 },
               ]}
             >

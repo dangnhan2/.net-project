@@ -41,6 +41,7 @@ const AddDish = (props) => {
       setFileList([]);
       message.success(res.message);
       getDishes();
+      form.resetFields();
       setModalAdd(false);
     } else {
       var errorMessage = Object.values(res.message).flat();

@@ -1,36 +1,48 @@
-import { Col, Divider, Form, Input, InputNumber, Modal, Row } from "antd";
+import { App, Col, Divider, Form, Input, Modal, Row } from "antd";
+import { addUnit } from "../../../api/api";
 
 const SubAddIngredient = (props) => {
-  const { openSubModal, setOpenSubModal } = props;
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+  const { message, notification } = App.useApp();
+  const [form] = Form.useForm();
+  const { openSubModal, setOpenSubModal, getUnits } = props;
 
-  const handleOk = () => {
-    setOpenSubModal(false);
+  const onFinish = async (values) => {
+    const { name } = values;
+    let res = await addUnit(name);
+    console.log(res);
+
+    if (res && res.statusCode === 201) {
+      form.resetFields();
+      setOpenSubModal(false);
+      getUnits();
+      message.success(res.message);
+    } else {
+      var errorMessage = Object.values(res.message).flat();
+      notification.error({
+        message: "Action Failed",
+        description: errorMessage,
+        duration: 3,
+      });
+    }
   };
 
   const handleCancel = () => {
     setOpenSubModal(false);
   };
 
-  const onChange = (value) => {
-    console.log("changed", value);
-  };
-
-  const onChangePrice = (value) => {
-    console.log("changed", value);
-  };
   return (
     <Modal
-      title="Add New Type"
+      title="Add New Unit Type"
       open={openSubModal}
-      onOk={handleOk}
+      onOk={() => {
+        form.submit();
+      }}
       onCancel={handleCancel}
-      width={700}
+      width={400}
     >
       <Divider></Divider>
       <Form
+        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -44,8 +56,8 @@ const SubAddIngredient = (props) => {
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Row gutter={[30, 30]}>
-          <Col span={12}>
+        <Row>
+          <Col span={24}>
             <Form.Item
               label="Name"
               name="name"

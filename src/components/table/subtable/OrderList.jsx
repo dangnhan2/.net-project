@@ -1,22 +1,31 @@
-import { Button, Table, Tag } from "antd";
-import { useState } from "react";
-import { FaPencilAlt, FaPlus } from "react-icons/fa";
+import { Button, Popconfirm, Table, Tag } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import SubAddOrder from "../../modal/submodal/SubAddOrder";
-import UpdateOrder from "../../modal/UpdateOrder";
+import { UserContext } from "../../../context/Context";
 
 const OrderList = () => {
   const [openSubModal, setOpenSubModal] = useState(false);
+  const { dishesOrder, setDishesOrder } = useContext(UserContext);
+
+  const confirm = (record) => {
+    setDishesOrder(dishesOrder.filter((item) => item.dishId !== record.dishId));
+  };
+
+  const cancel = (e) => {
+    // console.log(e);
+  };
 
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "dishId",
+      key: "dishId",
     },
     {
       title: "Dish",
-      dataIndex: "dish",
-      key: "dish",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Price",
@@ -31,8 +40,8 @@ const OrderList = () => {
 
     {
       title: "Total Amount",
-      dataIndex: "total_amount",
-      key: "total_amount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
     },
     {
       title: "Action",
@@ -41,39 +50,23 @@ const OrderList = () => {
       render: (value, record, index) => (
         <>
           <div style={{ display: "flex", gap: "5px" }}>
-            <Button onClick={() => handleUpdate(record)}>
-              <FaPencilAlt style={{ color: "#646465" }} />
-            </Button>
+            <Popconfirm
+              title="Delete dish"
+              description="Do you want to delete this dish ?"
+              placement="bottomRight"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => confirm(record)}
+              onCancel={cancel}
+            >
+              <Button>
+                <FaRegTrashAlt style={{ color: "#F38177" }} />
+              </Button>
+            </Popconfirm>
           </div>
         </>
       ),
     },
-  ];
-  const data = [
-    // {
-    //   id: "01",
-    //   customer: "Johan",
-    //   table: "A02",
-    //   price: "$20",
-    //   time: "12:53 PM",
-    //   tags: ["Completed"],
-    // },
-    // {
-    //   id: "02",
-    //   customer: "Han",
-    //   table: "A03",
-    //   price: "$20",
-    //   time: "10:53 PM",
-    //   tags: ["Pending"],
-    // },
-    // {
-    //   id: "03",
-    //   customer: "Sponge Bob",
-    //   table: "A04",
-    //   price: "$20",
-    //   time: "12:55 AM",
-    //   tags: ["Rejected"],
-    // },
   ];
   const render = () => {
     return (
@@ -96,11 +89,9 @@ const OrderList = () => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={dishesOrder}
         title={render}
-        // pagination={{
-        //   position: ["bottomCenter"],
-        // }}
+        pagination={false}
       />
       <SubAddOrder
         openSubModal={openSubModal}

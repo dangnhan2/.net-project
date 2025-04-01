@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api/api";
 import { UserContext } from "../context/Context";
 import { useContext } from "react";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const { user, setUser, isAuthenticated, setIsAuthenticated } =
@@ -17,11 +18,14 @@ const Login = () => {
   const onFinish = async (values) => {
     const { email, password } = values;
     let res = await login(email, password);
-    console.log(res.message);
+    console.log(res);
+
+    Cookies.set("token", res.token);
+    Cookies.set("refreshToken", res.refreshToken);
 
     if (res && res.token) {
-      localStorage.setItem("access_token", res.token);
       setIsAuthenticated(true);
+      setUser(res.employee);
       message.success("Login succeed");
       navigate("/");
     } else {

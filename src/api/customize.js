@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import Cookies from "js-cookie";
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   // withCredentials: true,
@@ -8,9 +8,10 @@ const instance = axios.create({
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
-    const token = localStorage.getItem("access_token");
-    const auth = token ? `Bearer ${token}` : "";
-    config.headers["Authorization"] = auth;
+    const token = Cookies.get("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   function (error) {
@@ -27,11 +28,8 @@ instance.interceptors.response.use(
     if (response.data && response.data) return response.data;
   },
   function (error) {
-    // console.log(error.response.data);
+    console.log(error);
 
-    // if (error && error.response && error.response.data) {
-    //   return error.response.data;
-    // }
     if (
       error &&
       error.response &&

@@ -4,11 +4,13 @@ import AddTable from "../modal/AddTable";
 import UpdateTable from "../modal/UpdateTable";
 import { useEffect, useState } from "react";
 import { deleteTable, getAllTables } from "../../api/api";
+import TableView from "../modal/view/TableView";
 const { Search } = Input;
 const T_Table = () => {
   const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataTable, setDataTable] = useState();
   const [dataSearch, setDataSearch] = useState();
@@ -70,6 +72,11 @@ const T_Table = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Number",
@@ -204,6 +211,11 @@ const T_Table = () => {
         dataRecord={dataRecord}
         getTables={getTables}
       ></UpdateTable>
+      <TableView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></TableView>
     </>
   );
 };

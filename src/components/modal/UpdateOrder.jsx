@@ -1,101 +1,82 @@
-import { Col, Divider, Form, Input, Modal, Row, Select } from "antd";
-import { useEffect, useState } from "react";
+import { App, Col, Divider, Form, Input, Modal, Row, Select } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { getAllCustomer, getAllTables, updateOrder } from "../../api/api";
+import { UserContext } from "../../context/Context";
+import OrderListView from "../table/subtable/OrderListView";
 
 const UpdateOrder = (props) => {
   const [form] = Form.useForm();
-  const { modalUpdate, setModalUpdate, dataRecord } = props;
-  const [data, setData] = useState();
-  console.log(dataRecord);
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+  const { message, notification } = App.useApp();
+  const { dishesOrder, setDishesOrder } = useContext(UserContext);
+  const { modalUpdate, setModalUpdate, dataRecord, getOrders } = props;
+  const [tables, setTables] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [statusChanging, setStatus] = useState();
 
-  const handleOk = () => {
-    setModalUpdate(false);
+  console.log(statusChanging);
+
+  const onFinish = async (values) => {
+    const { id, customerID, tableID, total } = values;
+
+    let res = await updateOrder(id, statusChanging);
+
+    if (res && res.statusCode === 200) {
+      message.success(res.message);
+      setModalUpdate(false);
+      getOrders();
+    } else {
+      let message = Object.values(res.message).flat();
+      notification.error({
+        message: "Action failed",
+        description: message,
+        duration: 3,
+      });
+    }
+    console.log("Success:", values);
   };
 
   const handleCancel = () => {
     setModalUpdate(false);
   };
 
+  const handleStatus = (e) => {
+    setStatus(e);
+  };
+
   useEffect(() => {
-    const totalOfPrice = dataRecord?.dishList.reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0);
-    const total_amount = dataRecord?.dishList.map((item) => {
-      return {
-        id: item.id,
-        dish: item.dish,
-        price: `$${item.price}`,
-        quantity: item.quantity,
-        total_amount: `$${item.price * item.quantity}`,
-      };
-    });
     if (dataRecord) {
+      let status = "";
+      status =
+        dataRecord?.status === 0
+          ? (status = "Pending")
+          : dataRecord?.status === 1
+          ? (status = "Completed")
+          : (status = "Rejected");
       form.setFieldsValue({
         id: dataRecord?.id,
-        customer: dataRecord?.customer,
-        tags: dataRecord?.tags[0],
-        total: totalOfPrice,
+        customerID: dataRecord?.customerID,
+        tableID: dataRecord?.tableNumber,
+        status: status,
+        total: dataRecord?.total,
       });
 
-      setData(total_amount);
+      setDishesOrder(dataRecord?.orderDishes);
     }
   }, [dataRecord]);
 
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "DISH",
-      dataIndex: "dish",
-      key: "dish",
-    },
-    {
-      title: "PRICE",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "QUANTITY",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-
-    {
-      title: "TOTAL AMOUNT",
-      dataIndex: "total_amount",
-      key: "total_amount",
-    },
-  ];
-
-  const render = () => {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h2>Order's Dish List</h2>
-      </div>
-    );
-  };
-
   return (
     <Modal
-      title="Edit Order"
+      title="Update Order"
       open={modalUpdate}
-      onOk={handleOk}
+      onOk={() => {
+        form.submit();
+      }}
       onCancel={handleCancel}
       width={700}
     >
       <Divider></Divider>
       <Form
+        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -126,7 +107,7 @@ const UpdateOrder = (props) => {
           <Col span={12}>
             <Form.Item
               label="Customer"
-              name="customer"
+              name="customerID"
               rules={[
                 {
                   required: true,
@@ -134,13 +115,13 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input placeholder="Enter name" />
+              <Input readOnly />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Table"
-              name="table"
+              name="tableID"
               rules={[
                 {
                   required: true,
@@ -148,12 +129,35 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input />
+              <Input readOnly />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={[30, 30]}>
+          <Col span={12}>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose status!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Choose status"
+                value={statusChanging}
+                onChange={handleStatus}
+              >
+                <Select.Option value={0}>Pending</Select.Option>
+                <Select.Option value={1}>Completed</Select.Option>
+                <Select.Option value={2}>Rejected</Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
+
           <Col span={12}>
             <Form.Item
               label="Total"
@@ -164,12 +168,12 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input />
+              <Input readOnly />
             </Form.Item>
           </Col>
         </Row>
       </Form>
-      {/* <OrderList></OrderList> */}
+      <OrderListView></OrderListView>
     </Modal>
   );
 };

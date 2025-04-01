@@ -1,36 +1,77 @@
-import { Col, Divider, Form, Input, InputNumber, Modal, Row } from "antd";
+import { App, Col, Divider, Form, InputNumber, Modal, Row, Select } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../../context/Context";
+import { getAllMenus } from "../../../api/api";
 
 const SubAddOrder = (props) => {
+  const { message } = App.useApp();
+  const [form] = Form.useForm();
+  const { dishesOrder, setDishesOrder } = useContext(UserContext);
+  const [menus, setMenus] = useState([]);
+  const [selectedMenu, setSelectedMenu] = useState(null);
+  const [filteredDishes, setFilteredDishes] = useState([]);
   const { openSubModal, setOpenSubModal } = props;
-  const onFinish = (values) => {
-    console.log("Success:", values);
+
+  const handleMenuChange = (menuId) => {
+    setSelectedMenu(menuId);
+    const dishes = menus.find((menu) => menu.id === menuId)?.dishes || [];
+    setFilteredDishes(dishes);
   };
 
-  const handleOk = () => {
+  const onFinish = (values) => {
+    const { menu, dish, quantity } = values;
+    let data = {
+      menu,
+      dish,
+      quantity,
+    };
+    // console.log(values);
+    let parseName = JSON.parse(data.dish);
+    const dishOrderItem = {
+      dishId: parseName.id,
+      menuId: menu,
+      price: parseName.price,
+      name: parseName.name,
+      quantity: quantity,
+      totalAmount: Number((quantity * parseName.price).toFixed(2)),
+    };
+    setDishesOrder([...dishesOrder, dishOrderItem]);
+
+    message.success("Action Succeed");
     setOpenSubModal(false);
+    form.resetFields();
+  };
+
+  useEffect(() => {
+    getMenus();
+  }, []);
+
+  const getMenus = async () => {
+    let res = await getAllMenus();
+    console.log(res.data);
+
+    if (res && res.statusCode === 200) {
+      setMenus(res.data);
+    }
   };
 
   const handleCancel = () => {
     setOpenSubModal(false);
   };
 
-  const onChange = (value) => {
-    console.log("changed", value);
-  };
-
-  const onChangePrice = (value) => {
-    console.log("changed", value);
-  };
   return (
     <Modal
       title="Dish"
       open={openSubModal}
-      onOk={handleOk}
+      onOk={() => {
+        form.submit();
+      }}
       onCancel={handleCancel}
       width={700}
     >
       <Divider></Divider>
       <Form
+        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -47,40 +88,50 @@ const SubAddOrder = (props) => {
         <Row gutter={[30, 30]}>
           <Col span={12}>
             <Form.Item
-              label="Name"
-              name="name"
+              label="Menu"
+              name="menu"
               rules={[
                 {
                   required: true,
-                  message: "Please input name!",
+                  message: "Please choose menu!",
                 },
               ]}
             >
-              <Input placeholder="Enter name" />
+              <Select placeholder="Choose menu" onChange={handleMenuChange}>
+                {menus.map((menu) => {
+                  return (
+                    <Select.Option key={menu.id} value={menu.id}>
+                      {menu.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
             </Form.Item>
           </Col>
+
           <Col span={12}>
             <Form.Item
-              label="Price"
-              name="price"
+              label="Dish"
+              name="dish"
               rules={[
                 {
                   required: true,
-                  message: "Please input price!",
+                  message: "Please choose dish!",
                 },
               ]}
             >
-              <InputNumber
-                min={1}
-                defaultValue={1}
-                onChange={onChangePrice}
-                style={{ width: "100%" }}
-              />
+              <Select>
+                {filteredDishes.map((dish) => (
+                  <Select.Option key={dish.id} value={JSON.stringify(dish)}>
+                    {dish.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>
 
-        <Row>
+        <Row gutter={[20, 20]}>
           <Col span={12}>
             <Form.Item
               label="Quantity"
@@ -88,11 +139,11 @@ const SubAddOrder = (props) => {
               rules={[
                 {
                   required: true,
-                  //   message: "Please input your address!",
+                  message: "Please input quantity!",
                 },
               ]}
             >
-              <InputNumber min={1} defaultValue={1} onChange={onChange} />
+              <InputNumber min={1} style={{ width: "100%" }} />
             </Form.Item>
           </Col>
         </Row>

@@ -1,12 +1,16 @@
 import { Button, Space, Table, Input, Tag } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddOrder from "../modal/AddOrder";
 import UpdateOrder from "../modal/UpdateOrder";
+import { getAllOrders } from "../../api/api";
 const { Search } = Input;
 const OrderTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [dataSort, setSort] = useState("status=DESC");
+  const [dataSearch, setDataSearch] = useState();
+  const [orders, setOrders] = useState();
   const [dataRecord, setDataRecord] = useState();
 
   const handleUpdate = (record) => {
@@ -14,11 +18,46 @@ const OrderTable = () => {
       { id: "01", dish: "America Coffee", price: "1", quantity: 1 },
       { id: "02", dish: "Lifton", price: "3.5", quantity: 3 },
     ];
+
     record.dishList = dishList;
     console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
+
+  const handleSearch = (e) => {
+    setDataSearch(e.target.value);
+  };
+
+  useEffect(() => {
+    getOrders();
+  }, [dataSearch, dataSort]);
+
+  const getOrders = async () => {
+    let query = dataSort;
+
+    if (dataSearch) {
+      query = `name=${dataSearch}&${dataSort}`;
+    }
+
+    let res = await getAllOrders(query);
+    if (res && res.statusCode === 200) {
+      setOrders(res.data);
+    }
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log(sorter);
+    let query = "";
+    if (sorter && sorter !== undefined) {
+      query =
+        sorter.order == "ascend"
+          ? `${sorter.field}=ASC`
+          : `${sorter.field}=DESC`;
+    }
+    setSort(query);
+  };
+
   const columns = [
     {
       title: "ID",
@@ -27,53 +66,58 @@ const OrderTable = () => {
     },
     {
       title: "Customer",
-      dataIndex: "customer",
-      key: "customer",
+      dataIndex: "customerName",
+      key: "customerName",
+      sorter: true,
     },
     {
       title: "Table",
-      dataIndex: "table",
-      key: "table",
+      dataIndex: "tableNumber",
+      key: "tableNumber",
     },
     {
       title: "Price",
-      dataIndex: "price",
-      key: "price",
+      dataIndex: "total",
+      key: "total",
     },
     {
       title: "Booking Time",
-      dataIndex: "time",
-      key: "time",
+      dataIndex: "bookingTime",
+      key: "bookingTime",
     },
     {
       title: "Status",
-      dataIndex: "tags",
-      key: "tags",
-      render: (_, { tags }) => (
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
         <>
-          {tags.map((tag) => {
-            let color;
-            if (tag === "Completed") {
-              color = "success";
+          <Tag
+            color={
+              status === 0
+                ? "orange"
+                : status === 1
+                ? "green"
+                : status === 2
+                ? "red"
+                : "default"
             }
-            if (tag === "Pending") {
-              color = "warning";
-            }
-            if (tag === "Rejected") {
-              color = "red";
-            }
-            return (
-              <Tag
-                color={color}
-                key={tag}
-                style={{
-                  fontWeight: "bold",
-                }}
-              >
-                {tag}
-              </Tag>
-            );
-          })}
+            style={{
+              fontWeight: "bold",
+              width: "80px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            {status === 0
+              ? "Pending"
+              : status === 1
+              ? "Completed"
+              : status === 2
+              ? "Rejected"
+              : "Unknown"}
+          </Tag>
         </>
       ),
     },
@@ -92,32 +136,7 @@ const OrderTable = () => {
       ),
     },
   ];
-  const data = [
-    {
-      id: "01",
-      customer: "Johan",
-      table: "A02",
-      price: "$20",
-      time: "12:53 PM",
-      tags: ["Completed"],
-    },
-    {
-      id: "02",
-      customer: "Han",
-      table: "A03",
-      price: "$20",
-      time: "10:53 PM",
-      tags: ["Pending"],
-    },
-    {
-      id: "03",
-      customer: "Sponge Bob",
-      table: "A04",
-      price: "$20",
-      time: "12:55 AM",
-      tags: ["Rejected"],
-    },
-  ];
+
   const render = () => {
     return (
       <div
@@ -129,7 +148,13 @@ const OrderTable = () => {
       >
         <h2>Order</h2>
         <div>
-          <Search placeholder="Search" allowClear style={{ width: 500 }} />
+          <Search
+            value={dataSearch}
+            placeholder="Search"
+            allowClear
+            style={{ width: 500 }}
+            onChange={handleSearch}
+          />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
           <FaPlus /> Add
@@ -137,21 +162,28 @@ const OrderTable = () => {
       </div>
     );
   };
+
   return (
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={orders}
+        onChange={handleTableChange}
         title={render}
         pagination={{
           position: ["bottomCenter"],
         }}
       />
-      <AddOrder modalAdd={modalAdd} setModalAdd={setModalAdd}></AddOrder>
+      <AddOrder
+        modalAdd={modalAdd}
+        setModalAdd={setModalAdd}
+        getOrders={getOrders}
+      ></AddOrder>
       <UpdateOrder
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
+        getOrders={getOrders}
       ></UpdateOrder>
     </>
   );

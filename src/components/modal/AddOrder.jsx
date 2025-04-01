@@ -1,28 +1,105 @@
-import { Col, Divider, Form, Input, Modal, Row, Select } from "antd";
+import {
+  App,
+  Col,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+} from "antd";
 import OrderList from "../table/subtable/OrderList";
+import { addOrder, getAllCustomer, getAllTables } from "../../api/api";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../context/Context";
 const AddOrder = (props) => {
-  const { modalAdd, setModalAdd } = props;
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+  const [form] = Form.useForm();
+  const { message, notification } = App.useApp();
+  const { dishesOrder, setDishesOrder } = useContext(UserContext);
 
-  const handleOk = () => {
-    setModalAdd(false);
+  const [tables, setTables] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const { modalAdd, setModalAdd, getOrders } = props;
+  console.log(customers);
+
+  const onFinish = async (values) => {
+    const { customerID, tableID, status, total } = values;
+    let res = await addOrder(
+      tableID,
+      customerID,
+      status,
+      Number(total),
+      dishesOrder
+    );
+
+    if (res && res.statusCode === 201) {
+      message.success(res.message);
+      setModalAdd(false);
+      getOrders();
+      setDishesOrder([]);
+      form.resetFields();
+    } else {
+      const errorMessage = Object.values(res).flat();
+      notification.error({
+        message: "Action Failed",
+        description: errorMessage,
+      });
+    }
   };
 
   const handleCancel = () => {
     setModalAdd(false);
+    setDishesOrder([]);
+    form.resetFields();
   };
+
+  useEffect(() => {
+    getTables();
+    getCustomers();
+
+    if (dishesOrder) {
+      let totalAmount = dishesOrder
+        .reduce((total, dish) => {
+          return total + dish.totalAmount;
+        }, 0)
+        .toFixed(2);
+
+      form.setFieldsValue({
+        total: totalAmount,
+      });
+    }
+  }, [dishesOrder]);
+
+  const getTables = async () => {
+    let res = await getAllTables();
+    console.log(res);
+
+    if (res && res.statusCode === 200) {
+      setTables(res.data);
+    }
+  };
+
+  const getCustomers = async () => {
+    let res = await getAllCustomer();
+    if (res && res.statusCode === 200) {
+      setCustomers(res.data);
+    }
+  };
+
   return (
     <Modal
       title="Add New Order"
       open={modalAdd}
-      onOk={handleOk}
+      onOk={() => {
+        form.submit();
+      }}
       onCancel={handleCancel}
       width={700}
     >
       <Divider></Divider>
       <Form
+        form={form}
         name="basic"
         labelCol={{
           span: 24,
@@ -36,11 +113,11 @@ const AddOrder = (props) => {
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Row gutter={[30, 30]}>
+        <Row gutter={[20, 20]}>
           <Col span={12}>
             <Form.Item
               label="Customer"
-              name="customer"
+              name="customerID"
               rules={[
                 {
                   required: true,
@@ -48,26 +125,64 @@ const AddOrder = (props) => {
                 },
               ]}
             >
-              <Input placeholder="Enter name" />
+              <Select placeholder="Choose table">
+                {customers.map((customer) => {
+                  return (
+                    <Select.Option value={customer.id}>
+                      {customer.fullName}
+                    </Select.Option>
+                  );
+                })}
+                ;
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Table"
-              name="table"
+              name="tableID"
               rules={[
                 {
                   required: true,
-                  message: "Please input table!",
+                  message: "Please choose table!",
                 },
               ]}
             >
-              <Input placeholder="Enter table" />
+              <Select placeholder="Choose table">
+                {tables.map((table) => {
+                  return table.status === 2 ? (
+                    <Select.Option value={table.id}>
+                      {table.number}
+                    </Select.Option>
+                  ) : (
+                    ""
+                  );
+                })}
+              </Select>
             </Form.Item>
           </Col>
         </Row>
 
-        <Row>
+        <Row gutter={[20, 20]}>
+          <Col span={12}>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose status!",
+                },
+              ]}
+            >
+              <Select placeholder="Choose role">
+                <Select.Option value={0}>Pending</Select.Option>
+                <Select.Option value={1}>Completed</Select.Option>
+                <Select.Option value={2}>Rejected</Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
+
           <Col span={12}>
             <Form.Item
               label="Total"
@@ -75,11 +190,10 @@ const AddOrder = (props) => {
               rules={[
                 {
                   required: true,
-                  //   message: "Please input your address!",
                 },
               ]}
             >
-              <Input readOnly />
+              <Input readonly />
             </Form.Item>
           </Col>
         </Row>

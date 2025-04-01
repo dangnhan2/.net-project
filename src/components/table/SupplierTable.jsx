@@ -4,11 +4,13 @@ import UpdateSupplier from "../modal/UpdateSupplier";
 import { useEffect, useState } from "react";
 import AddSupplier from "../modal/AddSupplier";
 import { deleteSupplier, getAllSuppliers } from "../../api/api";
+import SupplierView from "../modal/view/SupplierView";
 const { Search } = Input;
 const SupplierTable = () => {
   const { message, notification } = App.useApp();
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataSuppliers, setDataSuppliers] = useState();
   const [sort, setSort] = useState("name=DESC");
@@ -76,6 +78,11 @@ const SupplierTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Name",
@@ -174,6 +181,11 @@ const SupplierTable = () => {
         dataRecord={dataRecord}
         getSuppliers={getSuppliers}
       ></UpdateSupplier>
+      <SupplierView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></SupplierView>
     </>
   );
 };

@@ -28,15 +28,13 @@ const MenuList = () => {
       title: "Image",
       dataIndex: "imgUrl",
       key: "imgUrl",
-      render: (_, record) => {
-        console.log(record);
-
+      render: (_, record) => (
         <img
           src={`${import.meta.env.VITE_IMAGE_URL}images/${record.imgUrl}`}
           alt={record.name}
-          style={{ height: "20%", width: "15%" }}
-        />;
-      },
+          style={{ width: 100 }}
+        />
+      ),
     },
     {
       title: "Name",
@@ -49,6 +47,11 @@ const MenuList = () => {
       key: "discount",
     },
     {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
       title: "Action",
       dataIndex: "action",
 
@@ -56,8 +59,8 @@ const MenuList = () => {
         <>
           <div style={{ display: "flex", gap: "5px" }}>
             <Popconfirm
-              title="Xóa món ăn"
-              description="Bạn có muốn xóa món ăn này ?"
+              title="Delete dish"
+              description="Do you want to delete this dish ?"
               placement="bottomRight"
               okText="Yes"
               cancelText="No"
@@ -83,10 +86,10 @@ const MenuList = () => {
           alignItems: "center",
         }}
       >
-        <h2>Order's Dish List</h2>
+        <h2>Menu's Dish List</h2>
 
         <Button type="primary" onClick={() => setOpenSubModal(true)}>
-          <FaPlus /> Add dish to order
+          <FaPlus /> Add dish to menu
         </Button>
       </div>
     );

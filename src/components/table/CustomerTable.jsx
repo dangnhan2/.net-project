@@ -1,28 +1,27 @@
 import { App, Button, Input, Popconfirm, Table } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import AddCustomer from "../modal/AddCustomer";
 import UpdateCustomer from "../modal/UpdateCustomer";
 import { deleteCustomer, getAllCustomer } from "../../api/api";
+import CustomerView from "../modal/view/CustomerView";
 const { Search } = Input;
 
 const CustomerTable = () => {
   const { message, notification } = App.useApp();
+  const [dataCustomer, setDataCustomer] = useState([]);
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
-  const [dataCustomer, setDataCustomer] = useState([]);
   const [dataSorter, setSort] = useState("fullName=DESC");
   const [dataSearch, setDataSearch] = useState();
   const handleUpdate = (record) => {
-    // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
 
   const handleSearch = (e) => {
-    // console.log(e.target.value);
-
     setDataSearch(e.target.value);
   };
 
@@ -78,6 +77,11 @@ const CustomerTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Full Name",
@@ -172,6 +176,12 @@ const CustomerTable = () => {
         dataRecord={dataRecord}
         getCustomer={getCustomer}
       ></UpdateCustomer>
+
+      <CustomerView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></CustomerView>
     </>
   );
 };

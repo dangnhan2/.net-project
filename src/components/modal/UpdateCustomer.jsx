@@ -21,14 +21,15 @@ const UpdateCustomer = (props) => {
       note
     );
 
-    if (res) {
-      message.success("Cập nhật thành công");
+    if (res && res.statusCode === 200) {
+      message.success("Action succeed");
       setModalUpdate(false);
       getCustomer();
     } else {
+      const message = Object.values(res.message).flat();
       notification.error({
-        message: "Có lỗi xảy ra",
-        description: "Cập nhật thất bại",
+        message: "Action failed",
+        description: message,
         duration: 3,
       });
     }
@@ -48,7 +49,7 @@ const UpdateCustomer = (props) => {
 
   useEffect(() => {
     if (dataRecord) {
-      let gender;
+      let gender = "";
       if (dataRecord.gender === 0) gender = "Male";
       if (dataRecord.gender === 1) gender = "Female";
       if (dataRecord.gender === 2) gender = "Other";

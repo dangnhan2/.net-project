@@ -1,16 +1,39 @@
-import { Col, Divider, Form, Input, Modal, Row, Select } from "antd";
-import { useEffect } from "react";
+import { App, Col, Divider, Form, Input, Modal, Row, Select } from "antd";
+import { useEffect, useState } from "react";
+import { updateEmployee } from "../../api/api";
 const UpdateEmployee = (props) => {
+  const { message, notification } = App.useApp();
   const [form] = Form.useForm();
-  const { modalUpdate, setModalUpdate, dataRecord } = props;
-  console.log(dataRecord);
+  const { modalUpdate, setModalUpdate, dataRecord, getEmployees } = props;
+  const [statusEmp, setStatusEmp] = useState();
+  const [genderEmp, setGenderEmp] = useState();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const handleStatus = (e) => {
+    setStatusEmp(e);
   };
 
-  const handleOk = () => {
-    setModalUpdate(false);
+  const handleGender = (e) => {
+    setGenderEmp(e);
+  };
+  const onFinish = async (values) => {
+    const { id, fullName, phoneNo, email, address, role } = values;
+    let res = await updateEmployee(
+      id,
+      fullName,
+      phoneNo,
+      email,
+      address,
+      genderEmp,
+      statusEmp,
+      role
+    );
+
+    if (res) {
+      message.success("Action Succeed");
+      setModalUpdate(false);
+      getEmployees();
+    }
+    console.log(values);
   };
 
   const handleCancel = () => {
@@ -18,13 +41,25 @@ const UpdateEmployee = (props) => {
   };
 
   useEffect(() => {
+    let status = "";
+    let gender = "";
     if (dataRecord) {
+      if (dataRecord.status === 0) status = "Working";
+      if (dataRecord.status === 1) status = "Lay-off";
+
+      if (dataRecord.gender === 0) gender = "Male";
+      if (dataRecord.gender === 1) gender = "Female";
+      if (dataRecord.gender === 2) gender = "Other";
+
       form.setFieldsValue({
         id: dataRecord.id,
-        fullname: dataRecord.fullname,
-        phone: dataRecord.phone,
+        fullName: dataRecord.fullName,
+        phoneNo: dataRecord.phoneNo,
+        email: dataRecord.email,
+        address: dataRecord.address,
         role: dataRecord.role,
-        tag: dataRecord.tags[0],
+        gender: gender,
+        status: status,
       });
     }
   }, [dataRecord]);
@@ -32,7 +67,9 @@ const UpdateEmployee = (props) => {
     <Modal
       title="Update Employee"
       open={modalUpdate}
-      onOk={handleOk}
+      onOk={() => {
+        form.submit();
+      }}
       onCancel={handleCancel}
       width={700}
     >
@@ -69,30 +106,61 @@ const UpdateEmployee = (props) => {
           <Col span={12}>
             <Form.Item
               label="Full name"
-              name="fullname"
+              name="fullName"
               rules={[
                 {
                   required: true,
-                  message: "Please input your full name!",
+                  message: "Please input full name!",
                 },
               ]}
             >
-              <Input disabled />
+              <Input />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item
               label="Phone"
-              name="phone"
+              name="phoneNo"
               rules={[
                 {
                   required: true,
-                  message: "Please input your phone number!",
+                  message: "Please input phone number!",
                 },
               ]}
             >
-              <Input placeholder="Enter phone no" />
+              <Input placeholder="Enter phone " />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[20, 20]}>
+          <Col span={12}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input email!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter email" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input address!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter address" />
             </Form.Item>
           </Col>
         </Row>
@@ -105,30 +173,60 @@ const UpdateEmployee = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your address!",
+                  message: "Please choose role!",
                 },
               ]}
             >
               <Select placeholder="Choose role">
-                <Select.Option value="staff">Staff</Select.Option>
-                <Select.Option value="manage">Manage</Select.Option>
+                <Select.Option value="STAFF">Staff</Select.Option>
+                <Select.Option value="MANAGER">Manager</Select.Option>
+                <Select.Option value="ADMIN">Admin</Select.Option>
               </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Status"
-              name="tag"
+              name="status"
               rules={[
                 {
                   required: true,
-                  message: "Please input your address!",
+                  message: "Please choose status!",
                 },
               ]}
             >
-              <Select placeholder="Choose status">
-                <Select.Option value="working">Working</Select.Option>
-                <Select.Option value="lay-off">Lay-off</Select.Option>
+              <Select
+                placeholder="Choose status"
+                value={statusEmp}
+                onChange={handleStatus}
+              >
+                <Select.Option value={0}>Working</Select.Option>
+                <Select.Option value={1}>Lay-off</Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[20, 20]}>
+          <Col span={12}>
+            <Form.Item
+              label="Gender"
+              name="gender"
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose gender!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Choose gender"
+                value={genderEmp}
+                onChange={handleGender}
+              >
+                <Select.Option value={0}>Male</Select.Option>
+                <Select.Option value={1}>Female</Select.Option>
+                <Select.Option value={2}>Other</Select.Option>
               </Select>
             </Form.Item>
           </Col>

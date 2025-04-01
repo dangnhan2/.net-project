@@ -9,7 +9,9 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import { getDashBoard } from "../api/api";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,6 +22,20 @@ ChartJS.register(
   Legend
 );
 const Dashboard = () => {
+  const [quantity, setQuantity] = useState({});
+
+  useEffect(() => {
+    dashBoard();
+  }, []);
+
+  const dashBoard = async () => {
+    let res = await getDashBoard();
+
+    if (res && res.statusCode === 200) {
+      setQuantity(res.data);
+    }
+  };
+
   const data = {
     labels: [
       "11 Feb",
@@ -94,7 +110,10 @@ const Dashboard = () => {
               padding: "50px 10px",
             }}
           >
-            <Statistic title="Total Customers" value={1128} />
+            <Statistic
+              title="Total Customers"
+              value={quantity.numberOfCustomer}
+            />
           </div>
         </Col>
         <Col span={8} className="gutter-row">

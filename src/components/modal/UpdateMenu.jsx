@@ -99,7 +99,7 @@ const UpdateMenu = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please input table!",
+                  message: "Please choose status!",
                 },
               ]}
             >
@@ -119,7 +119,7 @@ const UpdateMenu = (props) => {
               rules={[
                 {
                   required: true,
-                  //   message: "Please input your address!",
+                  message: "Please input description!",
                 },
               ]}
             >

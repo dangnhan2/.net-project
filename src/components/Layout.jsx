@@ -8,7 +8,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FaTableCells } from "react-icons/fa6";
 import { GiKnifeFork, GiThreeLeaves } from "react-icons/gi";
@@ -17,34 +17,39 @@ import { GoListOrdered } from "react-icons/go";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { MdDashboard, MdOutlineGroups2 } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
-const items = [
-  {
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
-    ),
-    key: "0",
-  },
-  {
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.aliyun.com"
-      >
-        Đăng xuất
-      </a>
-    ),
-    key: "1",
-  },
-];
+import { UserContext } from "../context/Context";
+
 const LayoutAdmin = () => {
+  const { user, setUser } = useContext(UserContext);
   const [collapsed, setCollapsed] = useState(false);
+
+  const items = [
+    {
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.antgroup.com"
+        >
+          Đổi mật khẩu
+        </a>
+      ),
+      key: "0",
+    },
+    {
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.aliyun.com"
+        >
+          Đăng xuất
+        </a>
+      ),
+      key: "1",
+    },
+  ];
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -166,7 +171,7 @@ const LayoutAdmin = () => {
               >
                 <Space>
                   <Avatar icon={<UserOutlined />} />
-                  <span>Admin</span>
+                  <span>{user?.fullName}</span>
                   <DownOutlined style={{ color: "#58595A" }} />
                 </Space>
               </div>
