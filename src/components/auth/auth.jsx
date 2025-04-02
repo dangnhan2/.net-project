@@ -6,26 +6,12 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, setIsAuthenticated, user, setUser } =
     useContext(UserContext);
-  const navigate = useNavigate();
-  const location = useLocation();
-  if (!isAuthenticated && location.pathname === "/") {
-    return <Navigate to="/login" replace />;
-  }
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // if (isAuthenticated === false) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
-  if (!isAuthenticated) {
-    return (
-      <Result
-        status="403"
-        title="Unauthorized"
-        subTitle="You must be logged in to access this page."
-        extra={
-          <Button type="primary" onClick={() => navigate("/login")}>
-            Go to Login
-          </Button>
-        }
-      />
-    );
-  }
   return children;
 };
 

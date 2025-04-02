@@ -20,38 +20,85 @@ const UpdateIngredient = (props) => {
   const [suppliers, setSuppliers] = useState();
   const [handleUnit, setHandleUnit] = useState();
   const [handleSupplier, setHandleSupplier] = useState();
+  // console.log(dataRecord);
+
+  console.log(handleUnit);
+  console.log(handleSupplier);
 
   const onFinish = async (values) => {
-    const { id, name, quantity, description, price } = values;
+    const { id, name, quantity, description, price, supplier, unitType } =
+      values;
+    // console.log(values);
 
-    if (!handleUnit) {
-      notification.error({
-        message: "Unit Type is required!",
-        duration: 2,
-      });
-      return;
+    // let data = {
+    //   supplier,
+    //   unitType,
+    // };
+
+    // let parseSupplier = JSON.parse(data.supplier);
+    // let parseUnit = JSON.parse(data.unitType);
+    // let unitID;
+    // let unitName;
+    // let supplierObj = [];
+
+    // if (typeof supplier === "string" && typeof unitType === "string") {
+    //   supplierObj.push(handleSupplier);
+    //   (unitID = handleUnit.id), (unitName = handleUnit.type);
+    // } else {
+    //   supplierObj.push({
+    //     supplierId: parseSupplier.id,
+    //     supName: parseSupplier.name,
+    //     phoneNo: parseSupplier.phoneNo,
+    //     address: parseSupplier.address,
+    //     email: parseSupplier.email,
+    //   });
+    //   (unitID = parseUnit.id), (unitName = parseUnit.name);
+    // }
+
+    let supplierObj = [];
+    let unitID;
+    let unitName;
+
+    // Safe JSON parsing
+    let parseSupplier, parseUnit;
+    try {
+      parseSupplier = supplier ? JSON.parse(supplier) : null;
+    } catch (error) {
+      parseSupplier = null;
     }
 
-    if (!handleSupplier) {
-      notification.error({
-        message: "Supplier Type is required!",
-        duration: 2,
-      });
-      return;
+    try {
+      parseUnit = unitType ? JSON.parse(unitType) : null;
+    } catch (error) {
+      parseUnit = null;
     }
 
-    let unitType = handleUnit.name;
-    let unitID = handleUnit.id;
+    if (parseSupplier && parseUnit) {
+      supplierObj.push({
+        supplierId: parseSupplier.supplierID,
+        supName: parseSupplier.supName,
+        phoneNo: parseSupplier.phoneNo,
+        address: parseSupplier.address,
+        email: parseSupplier.email,
+      });
+      unitID = parseUnit.id;
+      unitName = parseUnit.name;
+    } else {
+      supplierObj.push(handleSupplier);
+      unitID = handleUnit?.id;
+      unitName = handleUnit?.name;
+    }
 
-    let supplierObj = [
-      {
-        supplierId: handleSupplier.id,
-        supName: handleSupplier.name,
-        phoneNo: handleSupplier.phoneNo,
-        address: handleSupplier.address,
-        email: handleSupplier.email,
-      },
-    ];
+    console.log(
+      id,
+      name,
+      quantity,
+      description,
+      price,
+      unitID,
+      unitName,
+      supplierObj
+    );
 
     let res = await updateIngredient(
       id,
@@ -60,11 +107,9 @@ const UpdateIngredient = (props) => {
       description,
       price,
       unitID,
-      unitType,
+      unitName,
       supplierObj
     );
-
-    console.log(res);
 
     if (res && res.statusCode === 200) {
       message.success(res.message);
@@ -109,12 +154,21 @@ const UpdateIngredient = (props) => {
       form.setFieldsValue({
         id: dataRecord.id,
         name: dataRecord.name,
-        supplier: dataRecord.supplierName[0].supName,
+        supplier: {
+          key: dataRecord.supplierName[0].supplierId,
+          label: dataRecord.supplierName[0].supName,
+        }, // Store as JSON string for Select component
         quantity: dataRecord.quantity,
         price: dataRecord.price,
-        unitType: dataRecord.unitType,
+        unitType: JSON.stringify({
+          id: dataRecord.unitID,
+          name: dataRecord.unitType,
+        }), // Store as JSON string
         description: dataRecord.description,
       });
+
+      setHandleSupplier(dataRecord.supplierName[0]);
+      setHandleUnit({ id: dataRecord.unitID, name: dataRecord.unitType });
     }
   }, [dataRecord]);
 
@@ -140,106 +194,115 @@ const UpdateIngredient = (props) => {
           <Input />
         </Form.Item>
 
-        <div style={{ display: "flex", gap: "16px" }}>
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: "Please enter ingredient's name!" },
-            ]}
-            style={{ flex: 1 }}
-          >
-            <Input placeholder="Enter name" />
-          </Form.Item>
+        <Row gutter={[20, 20]}>
+          <Col span={12}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[
+                { required: true, message: "Please enter ingredient's name!" },
+              ]}
+              style={{ flex: 1 }}
+            >
+              <Input placeholder="Enter name" />
+            </Form.Item>
+          </Col>
 
-          <Form.Item
-            label="Supplier"
-            name="supplier"
-            rules={[
-              {
-                required: true,
-                message: "Please choose ingredient's supplier!",
-              },
-            ]}
-            style={{ flex: 1 }}
-          >
-            <Select
+          <Col span={12}>
+            <Form.Item
+              label="Supplier"
               name="supplier"
-              onChange={(value, option) => {
-                setHandleSupplier(option.supplierData); // Lưu object supplier trực tiếp vào state
-              }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose ingredient's supplier!",
+                },
+              ]}
+              style={{ flex: 1 }}
             >
-              {suppliers &&
-                suppliers.map((supplier) => (
-                  <Select.Option
-                    key={supplier.id}
-                    value={supplier.id}
-                    supplierData={supplier}
-                  >
-                    {supplier.name}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-        </div>
+              <Select
+                // name="supplier"
+                onChange={(value) => setHandleSupplier(value)}
+              >
+                {suppliers &&
+                  suppliers.map((supplier) => (
+                    <Select.Option key={supplier.id} value={supplier.id}>
+                      {supplier.name}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
 
-        <div style={{ display: "flex", gap: "16px" }}>
-          <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[
-              {
-                required: true,
-                message: "Please enter ingredient's quantity!",
-              },
-            ]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber min={1} style={{ width: "100%" }} />
-          </Form.Item>
-
-          <Form.Item
-            label="Price"
-            name="price"
-            rules={[{ required: true, message: "Please select a status!" }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber min={1} style={{ width: "100%" }} />
-          </Form.Item>
-        </div>
-
-        <div style={{ display: "flex", gap: "16px" }}>
-          <Form.Item
-            label="Unit Type"
-            name="unitType"
-            rules={[
-              {
-                required: true,
-                message: "Please choose ingredient's unit type!",
-              },
-            ]}
-            style={{ flex: 1 }}
-          >
-            <Select
-              style={{ width: "230px" }}
-              name="unit"
-              onChange={(value, option) => {
-                setHandleUnit(option.unitData); // Lưu object unit trực tiếp vào state
-              }}
+        <Row gutter={[20, 20]}>
+          <Col span={12}>
+            <Form.Item
+              label="Quantity"
+              name="quantity"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter ingredient's quantity!",
+                },
+              ]}
+              style={{ flex: 1 }}
             >
-              {units &&
-                units.map((unit) => (
-                  <Select.Option key={unit.id} value={unit.id} unitData={unit}>
-                    {unit.name}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-        </div>
+              <InputNumber min={1} style={{ width: "100%" }} />
+            </Form.Item>
+          </Col>
 
-        <Form.Item label="Description" name="description" style={{ flex: 1 }}>
-          <Input.TextArea placeholder="Description: " rows={4} />
-        </Form.Item>
+          <Col span={12}>
+            <Form.Item
+              label="Price"
+              name="price"
+              rules={[{ required: true, message: "Please select a status!" }]}
+              style={{ flex: 1 }}
+            >
+              <InputNumber min={1} style={{ width: "100%" }} />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[20, 20]}>
+          <Col span={12}>
+            <Form.Item
+              label="Unit Type"
+              name="unitType"
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose ingredient's unit type!",
+                },
+              ]}
+              style={{ flex: 1 }}
+            >
+              <Select
+                style={{ width: "230px" }}
+                onChange={(value) => setHandleUnit(JSON.parse(value))}
+              >
+                {units &&
+                  units.map((unit) => (
+                    <Select.Option key={unit.id} value={JSON.stringify(unit)}>
+                      {unit.name}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              label="Description"
+              name="description"
+              style={{ flex: 1 }}
+            >
+              <Input.TextArea placeholder="Description: " rows={4} />
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );

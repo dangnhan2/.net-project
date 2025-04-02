@@ -112,7 +112,7 @@ const Dashboard = () => {
           >
             <Statistic
               title="Total Customers"
-              value={quantity.numberOfCustomer}
+              value={quantity.numberOfCustomers}
             />
           </div>
         </Col>
@@ -125,7 +125,7 @@ const Dashboard = () => {
               padding: "50px 10px",
             }}
           >
-            <Statistic title="Total Orders" value={1128} />
+            <Statistic title="Total Orders" value={quantity.numberOfOrders} />
           </div>
         </Col>
         <Col span={8} className="gutter-row">
@@ -137,7 +137,7 @@ const Dashboard = () => {
               padding: "50px 10px",
             }}
           >
-            <Statistic title="Total Sales" value={93} />
+            <Statistic title="Total Sales" value={quantity.numberOfBills} />
           </div>
         </Col>
       </Row>
