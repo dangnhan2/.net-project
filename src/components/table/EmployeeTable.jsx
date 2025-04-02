@@ -22,8 +22,8 @@ const EmployeeTable = () => {
   const getEmployees = async () => {
     let res = await getAllEmployee();
 
-    if (res) {
-      setEmployees(res);
+    if (res && res.statusCode === 200) {
+      setEmployees(res.data);
     }
   };
   const handleUpdate = (record) => {
@@ -35,13 +35,13 @@ const EmployeeTable = () => {
     let res = await deleteEmployee(record.id);
     console.log(res);
 
-    if (res) {
+    if (res && res.statusCode === 200) {
       message.success(res.message);
       getEmployees();
     } else {
       notification.error({
         message: "Action failed",
-        description: "Xóa nhà cung cấp thất bại",
+        description: res.message,
         duration: 3,
       });
     }

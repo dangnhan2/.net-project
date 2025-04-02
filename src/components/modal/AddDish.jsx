@@ -96,7 +96,7 @@ const AddDish = (props) => {
   };
   return (
     <Modal
-      title="Add New Dish"
+      title="Add Dish"
       open={modalAdd}
       onCancel={handleCancel}
       onOk={() => {

@@ -257,8 +257,8 @@ export const updateOrder = (id, status) => {
   });
 };
 
-export const getAllIngredients = () => {
-  return axios.get(`Ingredients/GetAllIngredients`);
+export const getAllIngredients = (query) => {
+  return axios.get(`Ingredients/GetAllIngredients?${query}`);
 };
 
 export const addIngredient = (
@@ -300,4 +300,12 @@ export const updateIngredient = (
     unitType,
     supplierName,
   });
+};
+
+export const getAllBills = () => {
+  return axios.get(`Bills`);
+};
+
+export const addBill = (orderIds, customerId, note) => {
+  return axios.post(`Bills/CreateFromOrders`, { orderIds, customerId, note });
 };

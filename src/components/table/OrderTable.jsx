@@ -1,9 +1,10 @@
-import { Button, Space, Table, Input, Tag } from "antd";
+import { Button, Table, Input, Tag } from "antd";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import AddOrder from "../modal/AddOrder";
 import UpdateOrder from "../modal/UpdateOrder";
 import { getAllOrders } from "../../api/api";
+import dayjs from "dayjs";
 const { Search } = Input;
 const OrderTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
@@ -84,6 +85,7 @@ const OrderTable = () => {
       title: "Booking Time",
       dataIndex: "bookingTime",
       key: "bookingTime",
+      render: (text) => dayjs(text).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: "Status",
@@ -116,7 +118,7 @@ const OrderTable = () => {
               ? "Completed"
               : status === 2
               ? "Rejected"
-              : "Unknown"}
+              : "Billed"}
           </Tag>
         </>
       ),
@@ -127,11 +129,15 @@ const OrderTable = () => {
 
       render: (value, record, index) => (
         <>
-          <div style={{ display: "flex", gap: "5px" }}>
-            <Button onClick={() => handleUpdate(record)}>
-              <FaPencilAlt style={{ color: "#646465" }} />
-            </Button>
-          </div>
+          {record.status === 0 || record.status === 1 || record.status === 2 ? (
+            <div style={{ display: "flex", gap: "5px" }}>
+              <Button onClick={() => handleUpdate(record)}>
+                <FaPencilAlt style={{ color: "#646465" }} />
+              </Button>
+            </div>
+          ) : (
+            ""
+          )}
         </>
       ),
     },
@@ -179,6 +185,7 @@ const OrderTable = () => {
         setModalAdd={setModalAdd}
         getOrders={getOrders}
       ></AddOrder>
+
       <UpdateOrder
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}

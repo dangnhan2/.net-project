@@ -115,7 +115,7 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input readOnly />
+              <Input disabled={true} />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -129,7 +129,7 @@ const UpdateOrder = (props) => {
                 },
               ]}
             >
-              <Input readOnly />
+              <Input disabled={true} />
             </Form.Item>
           </Col>
         </Row>

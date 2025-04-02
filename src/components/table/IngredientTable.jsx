@@ -10,19 +10,41 @@ const IngredientTable = () => {
   const [modalUpdate, setModalUpdate] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [ingredients, setIngredients] = useState();
+  const [sort, setSort] = useState("price=DESC");
+  const [search, setSearch] = useState();
 
   const handleUpdate = (record) => {
-    // console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
   };
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    let query = "";
+    if (sorter && sorter !== undefined) {
+      query =
+        sorter.order == "ascend"
+          ? `${sorter.field}=ASC`
+          : `${sorter.field}=DESC`;
+    }
+    setSort(query);
+  };
+
   useEffect(() => {
     getIngredients();
-  }, []);
+  }, [search, sort]);
 
   const getIngredients = async () => {
-    let res = await getAllIngredients();
+    let query = sort;
+
+    if (search) {
+      query = `ingredientName=${search}&${sort}`;
+    }
+
+    let res = await getAllIngredients(query);
     if (res && res.statusCode === 200) {
       setIngredients(res.data);
     }
@@ -53,6 +75,7 @@ const IngredientTable = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      sorter: true,
     },
     {
       title: "Action",
@@ -81,7 +104,13 @@ const IngredientTable = () => {
       >
         <h2>Ingredient</h2>
         <div>
-          <Search placeholder="Search" allowClear style={{ width: 500 }} />
+          <Search
+            placeholder="Search"
+            allowClear
+            style={{ width: 500 }}
+            value={search}
+            onChange={handleSearch}
+          />
         </div>
         <Button type="primary" onClick={() => setModalAdd(true)}>
           <FaPlus /> Add
@@ -95,6 +124,7 @@ const IngredientTable = () => {
         columns={columns}
         dataSource={ingredients}
         title={render}
+        onChange={handleTableChange}
         pagination={{
           position: ["bottomCenter"],
         }}

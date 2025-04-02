@@ -12,13 +12,20 @@ import OrderTable from "./components/table/OrderTable";
 import BillTable from "./components/table/BillTable";
 import MenuTable from "./components/table/MenuTable";
 import ShiftTable from "./components/table/ShiftTable";
+import ProtectedRoute from "./components/auth/auth";
 
 const router = createBrowserRouter([
   {
-    element: <LayoutAdmin />,
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <LayoutAdmin />
+      </ProtectedRoute>
+    ),
+
     children: [
       {
-        path: "/",
+        index: true,
         element: <Dashboard />,
       },
       {
@@ -67,7 +74,6 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-  // Add more routes as needed...
 ]);
 function App() {
   return <RouterProvider router={router} />;

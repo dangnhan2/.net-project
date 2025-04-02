@@ -25,27 +25,11 @@ const LayoutAdmin = () => {
 
   const items = [
     {
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-        >
-          Đổi mật khẩu
-        </a>
-      ),
+      label: <a>Đổi mật khẩu</a>,
       key: "0",
     },
     {
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.aliyun.com"
-        >
-          Đăng xuất
-        </a>
-      ),
+      label: <a>Đăng xuất</a>,
       key: "1",
     },
   ];
@@ -70,7 +54,7 @@ const LayoutAdmin = () => {
             height: "100%",
           }}
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={["0"]}
           items={[
             {
               key: "0",
@@ -137,6 +121,7 @@ const LayoutAdmin = () => {
           ]}
         />
       </Sider>
+
       <Layout>
         <Header
           style={{

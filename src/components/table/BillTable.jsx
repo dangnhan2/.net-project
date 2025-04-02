@@ -1,16 +1,24 @@
 import { Button, Table } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import AddBill from "../modal/AddBill";
+import dayjs from "dayjs";
+import { getAllBills } from "../../api/api";
 
 const BillTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
-  const [modalUpdate, setModalUpdate] = useState(false);
-  const [dataRecord, setDataRecord] = useState();
+  const [data, setData] = useState();
 
-  const handleUpdate = (record) => {
-    console.log(record);
-    setModalUpdate(true);
-    setDataRecord(record);
+  useEffect(() => {
+    getBills();
+  }, []);
+
+  const getBills = async () => {
+    let res = await getAllBills();
+
+    if (res) {
+      setData(res);
+    }
   };
   const columns = [
     {
@@ -20,18 +28,19 @@ const BillTable = () => {
     },
     {
       title: "CUSTOMER",
-      dataIndex: "customer",
-      key: "customer",
+      dataIndex: "customerName",
+      key: "customerName",
     },
     {
       title: "TABLE",
-      dataIndex: "table",
-      key: "table",
+      dataIndex: "tableNumber",
+      key: "tableNumber",
     },
     {
       title: "CREATED TIME",
-      dataIndex: "created_time",
-      key: "created_time",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (text) => dayjs(text).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: "TOTAL",
@@ -39,29 +48,7 @@ const BillTable = () => {
       key: "total",
     },
   ];
-  const data = [
-    {
-      id: "01",
-      customer: "Johan",
-      table: "A02",
-      created_time: "2022-01-01 10:00 PM",
-      total: "$10",
-    },
-    {
-      id: "02",
-      customer: "Han",
-      table: "A03",
-      created_time: "2022-01-01 10:00 PM",
-      total: "$10",
-    },
-    {
-      id: "03",
-      customer: "Sponge Bob",
-      table: "A05",
-      created_time: "2022-01-01 10:00 PM",
-      total: "$10",
-    },
-  ];
+
   const render = () => {
     return (
       <div
@@ -72,6 +59,9 @@ const BillTable = () => {
         }}
       >
         <h2>Bill</h2>
+        <Button type="primary" onClick={() => setModalAdd(true)}>
+          <FaPlus /> Add
+        </Button>
       </div>
     );
   };
@@ -85,12 +75,12 @@ const BillTable = () => {
           position: ["bottomCenter"],
         }}
       />
-      {/* <AddDish modalAdd={modalAdd} setModalAdd={setModalAdd}></AddDish>
-      <UpdateDish
-        modalUpdate={modalUpdate}
-        setModalUpdate={setModalUpdate}
-        dataRecord={dataRecord}
-      ></UpdateDish> */}
+
+      <AddBill
+        modalAdd={modalAdd}
+        setModalAdd={setModalAdd}
+        getBills={getBills}
+      ></AddBill>
     </>
   );
 };
