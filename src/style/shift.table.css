@@ -17,3 +17,81 @@
 .notes-month section {
   font-size: 28px;
 }
+
+/* Hide the add button by default */
+.schedule-cell .add-shift-button {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+/* Show the add button when the cell (.schedule-cell) is hovered */
+.schedule-cell:hover .add-shift-button {
+  visibility: visible;
+  opacity: 1;
+}
+
+.schedule-cell {
+  position: relative;
+}
+
+.schedule-cell-content {
+  min-height: 38px;
+  position: relative;
+}
+
+/* Style the container to look like a tag */
+.shift-assignment-item {
+  position: relative; 
+  display: inline-flex; 
+  align-items: center;
+  padding: 2px 24px 2px 8px;
+  border-radius: 12px; 
+  background-color: #e6f7ff; 
+  border: 1px solid #91d5ff; 
+  cursor: default; 
+  margin-right: 4px; 
+  margin-bottom: 2px; 
+  white-space: nowrap; 
+}
+
+/* Style and position the delete ICON */
+.shift-assignment-item .delete-assignment-icon {
+  position: absolute; /* Position inside the relative parent */
+  top: 50%;
+  right: 6px; /* Adjust position from right */
+  transform: translateY(-50%); /* Vertically center */
+  visibility: hidden; /* Hide by default */
+  opacity: 0;
+  transition: opacity 0.1s linear;
+  line-height: 1; 
+  cursor: pointer; /* Make the icon look clickable */
+  color: #555; /* Slightly grey color for the icon */
+  /* Ensure font size and weight are set here if not inline */
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Show delete icon on hover of the item */
+.shift-assignment-item:hover .delete-assignment-icon {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Container hover style (no background change) */
+.shift-assignment-item:hover {
+  background-color: #e6f7ff; /* Keep background the same */
+}
+
+/* Keep the add (+) button style */
+.add-shift-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  padding: 2px;
+}
+
+.date-picker-wrapper {
+  display: inline-block;
+}

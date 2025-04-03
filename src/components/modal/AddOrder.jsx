@@ -125,7 +125,7 @@ const AddOrder = (props) => {
                 },
               ]}
             >
-              <Select placeholder="Choose table">
+              <Select placeholder="Choose customer">
                 {customers.map((customer) => {
                   return (
                     <Select.Option value={customer.id}>

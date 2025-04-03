@@ -317,3 +317,51 @@ export const changePassword = (oldPassword, newPassword, confirmPassword) => {
     confirmPassword,
   });
 };
+
+export const getAllShifts = () => {
+  return axios.get(`Shifts/GetAllShifts`);
+};
+
+export const createShift = (name, startTime, endTime) => {
+  const formData = new FormData();
+  formData.append('Name', name); 
+  formData.append('StartTime', startTime); // HH:mm:ss string
+  formData.append('EndTime', endTime);     // HH:mm:ss string
+  return axios.post(`Shifts/CreateShift`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data", 
+    },
+  }); 
+};
+
+export const updateShift = (id, name, startTime, endTime) => {
+  const formData = new FormData();
+  formData.append('Name', name); // Use PascalCase
+  formData.append('StartTime', startTime); // HH:mm:ss string
+  formData.append('EndTime', endTime);     // HH:mm:ss string
+  return axios.put(`Shifts/UpdateShift/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const deleteShift = (id) => {
+  return axios.delete(`Shifts/DeleteShift/${id}`);
+};
+
+export const getAllWorkingShifts = () => {
+  return axios.get("WorkingShift/GetAllWorkingShifts");
+};
+
+export const getWorkingShift = (empId, shiftId, workdate) => {
+  return axios.get(`WorkingShift/GetWorkingShift/${empId}/${shiftId}/${workdate}`);
+};
+
+export const addWorkingShift = (payload) => {
+  return axios.post("WorkingShift/AddWorkingShift", payload);
+};
+
+export const deleteWorkingShift = (empId, shiftId, workdate) => {
+  return axios.delete(`WorkingShift/DeleteWorkingShift/${empId}/${shiftId}/${workdate}`);
+};

@@ -18,6 +18,7 @@ import { MdDashboard, MdOutlineGroups2 } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 import { UserContext } from "../context/Context";
 import Cookies from "js-cookie";
+import MadoCoffeeLogo from "../img/MadoCoffeeLogo.png";
 
 const LayoutAdmin = () => {
   const { user } = useContext(UserContext);
@@ -65,6 +66,71 @@ const LayoutAdmin = () => {
     },
   ];
 
+  // Dynamically build menu items based on user role
+  const menuItems = [
+    {
+      key: "0",
+      icon: <MdDashboard />,
+      label: <Link to="/">Dashboard</Link>,
+    },
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: <Link to="/customer">Customer</Link>,
+    },
+    {
+      key: "2",
+      icon: <VideoCameraOutlined />,
+      label: <Link to="/supplier">Supplier</Link>,
+    },
+    {
+      key: "3",
+      icon: <FaTableCells />,
+      label: <Link to="/table">Table</Link>,
+    },
+    {
+      key: "4",
+      icon: <GiThreeLeaves />,
+      label: <Link to="/ingredients">Ingredient</Link>,
+    },
+    {
+      key: "5",
+      icon: <GiKnifeFork />,
+      label: <Link to="/dish">Dish</Link>,
+    },
+    {
+      key: "6",
+      icon: <BiFoodMenu />,
+      label: <Link to="/menu">Menu</Link>,
+    },
+    {
+      key: "7",
+      icon: <GoListOrdered />,
+      label: <Link to="/order">Order</Link>,
+    },
+    {
+      key: "8",
+      icon: <FaMoneyBillAlt />,
+      label: <Link to="/bill">Bill</Link>,
+    },
+  ];
+
+  // Add Employee item only if user is Admin
+  if (user?.role === "ADMIN") {
+    menuItems.push({
+      key: "9",
+      icon: <MdOutlineGroups2 />,
+      label: <Link to="/employee">Employee</Link>,
+    });
+  }
+
+  // Add Shift item (always visible)
+  menuItems.push({
+    key: "10",
+    icon: <SlCalender />,
+    label: <Link to="/shift">Shift</Link>,
+  });
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -77,8 +143,11 @@ const LayoutAdmin = () => {
             alignItems: "center",
           }}
         >
-          <h1 style={{ fontSize: "20px", color: "#6E9CFB" }}>Mado</h1>
-          <h1 style={{ fontSize: "20px" }}>Coffee</h1>
+          <div
+            style={{ display: "flex", alignItems: "center", paddingLeft: "10px" }}
+          >
+            <img src={MadoCoffeeLogo} alt="Mado Coffee Logo" style={{ height: "60px" }} />
+          </div>
         </div>
         <Menu
           style={{
@@ -87,70 +156,7 @@ const LayoutAdmin = () => {
           mode="inline"
           selectedKeys={[activeMenu]}
           onClick={(e) => setActiveMenu(e.key)}
-          items={[
-            {
-              key: "0",
-              icon: <MdDashboard />,
-              label: <Link to="/">Dashboard</Link>,
-            },
-            {
-              key: "1",
-              icon: <UserOutlined />,
-              label: <Link to="/customer">Customer</Link>,
-            },
-            {
-              key: "2",
-              icon: <VideoCameraOutlined />,
-              label: <Link to="/supplier">Supplier</Link>,
-            },
-            {
-              key: "3",
-              icon: <FaTableCells />,
-              label: <Link to="/table">Table</Link>,
-            },
-
-            {
-              key: "4",
-              icon: <GiThreeLeaves />,
-              label: <Link to="/ingredients">Ingredient</Link>,
-            },
-
-            {
-              key: "5",
-              icon: <GiKnifeFork />,
-              label: <Link to="/dish">Dish</Link>,
-            },
-
-            {
-              key: "6",
-              icon: <BiFoodMenu />,
-              label: <Link to="/menu">Menu</Link>,
-            },
-
-            {
-              key: "7",
-              icon: <GoListOrdered />,
-              label: <Link to="/order">Order</Link>,
-            },
-
-            {
-              key: "8",
-              icon: <FaMoneyBillAlt />,
-              label: <Link to="/bill">Bill</Link>,
-            },
-
-            {
-              key: "9",
-              icon: <MdOutlineGroups2 />,
-              label: <Link to="/employee">Employee</Link>,
-            },
-
-            {
-              key: "10",
-              icon: <SlCalender />,
-              label: <Link to="/shift">Shift</Link>,
-            },
-          ]}
+          items={menuItems}
         />
       </Sider>
 
