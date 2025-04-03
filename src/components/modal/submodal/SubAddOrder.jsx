@@ -25,7 +25,7 @@ const SubAddOrder = (props) => {
       dish,
       quantity,
     };
-    // console.log(values);
+
     let parseName = JSON.parse(data.dish);
     const dishOrderItem = {
       dishId: parseName.id,
@@ -35,7 +35,19 @@ const SubAddOrder = (props) => {
       quantity: quantity,
       totalAmount: Number((quantity * parseName.price).toFixed(2)),
     };
-    setDishesOrder([...dishesOrder, dishOrderItem]);
+
+    let existDish = dishesOrder.findIndex(
+      (d) => d.dishId === dishOrderItem.dishId
+    );
+    if (existDish === -1) {
+      setDishesOrder([...dishesOrder, dishOrderItem]);
+    } else {
+      dishesOrder[existDish].menuId = dishOrderItem.menuId;
+      dishesOrder[existDish].price = dishOrderItem.price;
+      dishesOrder[existDish].name = dishOrderItem.name;
+      dishesOrder[existDish].quantity = dishOrderItem.quantity;
+      dishesOrder[existDish].totalAmount = dishOrderItem.totalAmount;
+    }
 
     message.success("Action Succeed");
     setOpenSubModal(false);
@@ -99,11 +111,13 @@ const SubAddOrder = (props) => {
             >
               <Select placeholder="Choose menu" onChange={handleMenuChange}>
                 {menus.map((menu) => {
-                  return (
-                    <Select.Option key={menu.id} value={menu.id}>
-                      {menu.name}
-                    </Select.Option>
-                  );
+                  if (menu.status === 1) {
+                    return (
+                      <Select.Option key={menu.id} value={menu.id}>
+                        {menu.name}
+                      </Select.Option>
+                    );
+                  }
                 })}
               </Select>
             </Form.Item>

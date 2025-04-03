@@ -2,8 +2,8 @@ import { useContext, useState } from "react";
 import { UserContext } from "../../../context/Context";
 import { Table } from "antd";
 
-const OrderListView = () => {
-  const { dishesOrder, setDishesOrder } = useContext(UserContext);
+const OrderListView = (props) => {
+  const { dishes } = props;
 
   const columns = [
     {
@@ -50,7 +50,7 @@ const OrderListView = () => {
     <>
       <Table
         columns={columns}
-        dataSource={dishesOrder}
+        dataSource={dishes}
         title={render}
         pagination={false}
       />

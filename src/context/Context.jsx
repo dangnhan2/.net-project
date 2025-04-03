@@ -1,40 +1,42 @@
 import { createContext, useEffect, useState } from "react";
 import { refresh } from "../api/api";
 import Cookies from "js-cookie";
+import axios from "../api/customize";
+
 const UserContext = createContext();
 const ContextProvider = ({ children }) => {
   const [dishes, setDishes] = useState([]);
   const [dishesOrder, setDishesOrder] = useState([]);
   const [user, setUser] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [isRefreshing, setIsRefreshing] = useState(true);
   useEffect(() => {
-    resToken();
+    const checkAuth = async () => {
+      await resToken();
+      setIsRefreshing(false);
+    };
+
+    checkAuth();
   }, []);
 
   const resToken = async () => {
     const refreshToken = Cookies.get("refreshToken");
 
-    if (!refreshToken) {
-      return;
-    }
-
+    setIsRefreshing(true);
     const res = await refresh(refreshToken);
-    console.log(res);
+    setIsRefreshing(false);
+    // console.log(res);
 
     if (res?.token) {
-      // Save new tokens in cookies
       Cookies.set("token", res.token, { secure: true, sameSite: "Strict" });
       Cookies.set("refreshToken", res.refreshToken, {
         secure: true,
         sameSite: "Strict",
       });
 
-      // Set user data and authentication status
       setUser(res.employee);
       setIsAuthenticated(true);
 
-      // Update Axios headers for future requests
       axios.defaults.headers.Authorization = `Bearer ${res.token}`;
     }
   };
@@ -48,6 +50,8 @@ const ContextProvider = ({ children }) => {
         setUser,
         dishesOrder,
         setDishesOrder,
+        isRefreshing,
+        setIsRefreshing,
         isAuthenticated,
         setIsAuthenticated,
       }}

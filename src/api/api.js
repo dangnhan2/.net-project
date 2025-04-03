@@ -309,3 +309,11 @@ export const getAllBills = () => {
 export const addBill = (orderIds, customerId, note) => {
   return axios.post(`Bills/CreateFromOrders`, { orderIds, customerId, note });
 };
+
+export const changePassword = (oldPassword, newPassword, confirmPassword) => {
+  return axios.post(`Authentication/change-password`, {
+    oldPassword,
+    newPassword,
+    confirmPassword,
+  });
+};

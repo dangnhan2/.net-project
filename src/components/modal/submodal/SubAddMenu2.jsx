@@ -19,6 +19,7 @@ const SubAddMenu2 = (props) => {
     };
 
     let parseName = JSON.parse(data.name);
+
     var dish = {
       id: parseName.id,
       imgUrl: parseName.imageUrl,
@@ -27,7 +28,13 @@ const SubAddMenu2 = (props) => {
       price: parseName.price - parseName.price * discount,
     };
 
-    setDishes([...dishes, dish]);
+    let existDish = dishes.findIndex((d) => d.id === dish.id);
+    if (existDish === -1) {
+      setDishes([...dishes, dish]);
+    } else {
+      dishes[existDish].discount = dish.discount;
+      dishes[existDish].price = dish.price;
+    }
     setOpenSubModal(false);
     message.success("Action Succeed");
     form.resetFields();

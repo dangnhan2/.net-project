@@ -7,21 +7,19 @@ import OrderListView from "../table/subtable/OrderListView";
 const UpdateOrder = (props) => {
   const [form] = Form.useForm();
   const { message, notification } = App.useApp();
-  const { dishesOrder, setDishesOrder } = useContext(UserContext);
   const { modalUpdate, setModalUpdate, dataRecord, getOrders } = props;
-  const [tables, setTables] = useState([]);
-  const [customers, setCustomers] = useState([]);
+  const [dishes, setDishes] = useState([]);
   const [statusChanging, setStatus] = useState();
 
-  console.log(statusChanging);
+  console.log(dataRecord);
 
   const onFinish = async (values) => {
     const { id, customerID, tableID, total } = values;
-
     let res = await updateOrder(id, statusChanging);
 
     if (res && res.statusCode === 200) {
       message.success(res.message);
+      setDishesOrder([]);
       setModalUpdate(false);
       getOrders();
     } else {
@@ -60,7 +58,7 @@ const UpdateOrder = (props) => {
         total: dataRecord?.total,
       });
 
-      setDishesOrder(dataRecord?.orderDishes);
+      setDishes(dataRecord?.orderDishes);
     }
   }, [dataRecord]);
 
@@ -173,7 +171,7 @@ const UpdateOrder = (props) => {
           </Col>
         </Row>
       </Form>
-      <OrderListView></OrderListView>
+      <OrderListView dishes={dishes} setDishes={setDishes}></OrderListView>
     </Modal>
   );
 };

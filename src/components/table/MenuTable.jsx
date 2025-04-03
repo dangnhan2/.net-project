@@ -5,12 +5,14 @@ import { useContext, useEffect, useState } from "react";
 import UpdateMenu from "../modal/UpdateMenu";
 import { deleteMenu, getAllMenus } from "../../api/api";
 import { UserContext } from "../../context/Context";
+import MenuView from "../modal/view/MenuView";
 const { Search } = Input;
 const MenuTable = () => {
   const { message, notification } = App.useApp();
   const { setDishes } = useContext(UserContext);
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [dataSearch, setDataSearch] = useState();
   const [dataMenu, setDataMenu] = useState();
@@ -73,6 +75,11 @@ const MenuTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Menu",
@@ -179,12 +186,19 @@ const MenuTable = () => {
         setModalAdd={setModalAdd}
         getMenus={getMenus}
       ></AddMenu>
+
       <UpdateMenu
         modalUpdate={modalUpdate}
         setModalUpdate={setModalUpdate}
         dataRecord={dataRecord}
         getMenus={getMenus}
       ></UpdateMenu>
+
+      <MenuView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></MenuView>
     </>
   );
 };

@@ -7,6 +7,8 @@ import {
   Select,
   Button,
   App,
+  Col,
+  Row,
 } from "antd";
 import { useEffect, useState } from "react";
 import { PlusCircleOutlined } from "@ant-design/icons";
@@ -21,42 +23,38 @@ const AddIngredient = (props) => {
   const [suppliers, setSuppliers] = useState();
   const [handleUnit, setHandleUnit] = useState();
   const [openSubModal, setOpenSubModal] = useState(false);
-  // console.log(handleUnit);
 
   const onFinish = async (values) => {
-    // console.log(values);
-
     const { name, quantity, description, price, supplier } = values;
+    console.log(values);
 
-    let data = {
-      supplier,
-    };
+    const selectedSuppliers = suppliers
+      .filter((s) => values.supplier.includes(s.value)) // Dùng `id` để lọc
+      .map((s) => s.object); // Lấy object đầy đủ
 
-    let parseSupplier = JSON.parse(data.supplier);
-    let parseUnit = JSON.parse(handleUnit);
+    console.log("Selected suppliers:", selectedSuppliers);
 
-    let unitType = parseUnit.name;
-    let unitID = parseUnit.id;
-
-    let supplierObj = [
-      {
-        supplierId: parseSupplier.id,
-        supName: parseSupplier.name,
-        phoneNo: parseSupplier.phoneNo,
-        address: parseSupplier.address,
-        email: parseSupplier.email,
-      },
-    ];
+    let supplierObjs = selectedSuppliers.map((s) => {
+      return {
+        supplierId: s.id,
+        supName: s.name,
+        phoneNo: s.phoneNo,
+        address: s.address,
+        email: s.email,
+      };
+    });
 
     let res = await addIngredient(
       name,
       quantity,
       description,
       price,
-      unitID,
-      unitType,
-      supplierObj
+      handleUnit.id,
+      handleUnit.name,
+      supplierObjs
     );
+
+    console.log(res);
 
     if (res && res.statusCode === 201) {
       message.success(res.message);
@@ -64,7 +62,7 @@ const AddIngredient = (props) => {
       setModalAdd(false);
       getIngredients();
     } else {
-      let errorMessage = Object.values(res.message).flat();
+      let errorMessage = Object.values(res).flat();
       notification.error({
         message: "Action Failed",
         description: errorMessage,
@@ -75,6 +73,7 @@ const AddIngredient = (props) => {
 
   const handleCancel = () => {
     setModalAdd(false);
+    form.resetFields();
   };
 
   useEffect(() => {
@@ -84,8 +83,17 @@ const AddIngredient = (props) => {
 
   const getSuppliers = async () => {
     let res = await getAllSuppliers();
+    console.log(res);
+
     if (res && res.statusCode === 200) {
-      setSuppliers(res.data);
+      const formattedSuppliers = res.data.map((supplier) => ({
+        value: supplier.id, // ID dùng trong Select
+        label: supplier.name,
+        object: supplier, // Giữ nguyên object để dùng sau
+      }));
+
+      setSuppliers(formattedSuppliers);
+      // setSuppliers(res.data);
     }
   };
 
@@ -115,92 +123,100 @@ const AddIngredient = (props) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <div style={{ display: "flex", gap: "16px" }}>
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                { required: true, message: "Please enter ingredient's name!" },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <Input placeholder="Enter name" />
-            </Form.Item>
+          <Row gutter={[20, 20]}>
+            <Col span={12}>
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter ingredient's name!",
+                  },
+                ]}
+                style={{ flex: 1 }}
+              >
+                <Input placeholder="Enter name" />
+              </Form.Item>
+            </Col>
 
-            <Form.Item
-              label="Supplier"
-              name="supplier"
-              rules={[
-                {
-                  required: true,
-                  message: "Please choose ingredient's supplier!",
-                },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <Select>
-                {suppliers &&
-                  suppliers.map((supplier) => (
-                    <Select.Option
-                      key={supplier.id}
-                      value={JSON.stringify(supplier)}
-                    >
-                      {supplier.name}
-                    </Select.Option>
-                  ))}
-              </Select>
-            </Form.Item>
-          </div>
+            <Col span={12}>
+              <Form.Item
+                label="Supplier"
+                name="supplier"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please choose ingredient's supplier!",
+                  },
+                ]}
+                style={{ flex: 1 }}
+              >
+                <Select
+                  mode="multiple"
+                  options={suppliers} // Đảm bảo có dữ liệu cho Select
+                  onChange={(selectedIds) => {
+                    form.setFieldsValue({ supplier: selectedIds }); // Cập nhật ID vào form
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <div style={{ display: "flex", gap: "16px" }}>
-            <Form.Item
-              label="Quantity"
-              name="quantity"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter ingredient's quantity!",
-                },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <InputNumber min={1} style={{ width: "100%" }} />
-            </Form.Item>
+          <Row gutter={[20, 20]}>
+            <Col span={12}>
+              <Form.Item
+                label="Quantity"
+                name="quantity"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter ingredient's quantity!",
+                  },
+                ]}
+                style={{ flex: 1 }}
+              >
+                <InputNumber min={1} style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Price"
+                name="price"
+                rules={[{ required: true, message: "Please select a status!" }]}
+                style={{ flex: 1 }}
+              >
+                <InputNumber min={1} style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+          </Row>
 
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[{ required: true, message: "Please select a status!" }]}
-              style={{ flex: 1 }}
-            >
-              <InputNumber min={1} style={{ width: "100%" }} />
-            </Form.Item>
-          </div>
-
-          <div style={{ display: "flex", gap: "16px" }}>
-            <Form.Item
-              label="Unit Type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please choose ingredient's unit type!",
-                },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+          <Row gutter={[20, 20]}>
+            <Col span={12}>
+              <Form.Item
+                label="Unit Type"
+                name="type"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please choose ingredient's unit type!",
+                  },
+                ]}
+                style={{ flex: 1 }}
               >
                 <Select
                   style={{ width: "230px" }}
-                  name="unit"
                   onChange={(value) => {
-                    setHandleUnit(value);
+                    const selectedUnit = units.find(
+                      (unit) => unit.id === value
+                    );
+                    setHandleUnit(selectedUnit);
+                    form.setFieldsValue({ type: selectedUnit });
                   }}
                 >
                   {units &&
                     units.map((unit) => (
-                      <Select.Option key={unit.id} value={JSON.stringify(unit)}>
+                      <Select.Option key={unit.id} value={unit.id}>
                         {unit.name}
                       </Select.Option>
                     ))}
@@ -210,13 +226,19 @@ const AddIngredient = (props) => {
                   onClick={() => setOpenSubModal(true)}
                   icon={<PlusCircleOutlined />}
                 />
-              </div>
-            </Form.Item>
-          </div>
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <Form.Item label="Description" name="description" style={{ flex: 1 }}>
-            <Input.TextArea placeholder="Description: " rows={4} />
-          </Form.Item>
+          <Row>
+            <Form.Item
+              label="Description"
+              name="description"
+              style={{ flex: 1 }}
+            >
+              <Input.TextArea placeholder="Description: " rows={4} />
+            </Form.Item>
+          </Row>
         </Form>
       </Modal>
 

@@ -13,6 +13,7 @@ import BillTable from "./components/table/BillTable";
 import MenuTable from "./components/table/MenuTable";
 import ShiftTable from "./components/table/ShiftTable";
 import ProtectedRoute from "./components/auth/auth";
+import ChangePassword from "./components/ChangePassword";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/change",
+    element: <ChangePassword />,
   },
 ]);
 function App() {

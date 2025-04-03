@@ -49,9 +49,9 @@ const AddOrder = (props) => {
   };
 
   const handleCancel = () => {
-    setModalAdd(false);
-    setDishesOrder([]);
     form.resetFields();
+    setDishesOrder([]);
+    setModalAdd(false);
   };
 
   useEffect(() => {
@@ -193,7 +193,7 @@ const AddOrder = (props) => {
                 },
               ]}
             >
-              <Input readonly />
+              <Input disabled />
             </Form.Item>
           </Col>
         </Row>

@@ -1,37 +1,24 @@
-import { App, Button, Checkbox, Form, Input } from "antd";
-import "../style/app.form.scss";
-import background from "../img/background.jpg";
+import { App, Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api/api";
-import { UserContext } from "../context/Context";
-import { useContext } from "react";
-import Cookies from "js-cookie";
-
-const Login = () => {
-  const { user, setUser, isAuthenticated, setIsAuthenticated } =
-    useContext(UserContext);
-
+import background from "../img/background.jpg";
+import { changePassword } from "../api/api";
+const ChangePassword = () => {
   const { message, notification } = App.useApp();
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    const { email, password } = values;
-    let res = await login(email, password);
+    const { oldPassword, newPassword, confirmPassword } = values;
+    let res = await changePassword(oldPassword, newPassword, confirmPassword);
     console.log(res);
 
-    Cookies.set("token", res.token);
-    Cookies.set("refreshToken", res.refreshToken);
-
-    if (res && res.token) {
-      setIsAuthenticated(true);
-      setUser(res.employee);
-      message.success("Login succeed");
+    if (res && res.statusCode === 200) {
+      message.success(res.message);
       navigate("/");
     } else {
       notification.error({
-        message: "Login failed",
-        description: res.message,
-        duration: 3,
+        message: "Action failed",
+        description: res.ConfirmPassword ? res.ConfirmPassword[0] : res.message,
+        duration: 5,
       });
     }
   };
@@ -45,10 +32,8 @@ const Login = () => {
       }}
     >
       <div className="container-form">
-        <h2 className="sign">Sign in</h2>
-        <div style={{ color: "#58595A" }}>
-          Please enter your account and password to continue
-        </div>
+        <h2 className="sign">Change Password</h2>
+
         <div>
           <Form
             name="basic"
@@ -66,25 +51,38 @@ const Login = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Username"
-              name="email"
+              label="Old Password"
+              name="oldPassword"
               rules={[
                 {
                   required: true,
-                  message: "Please input your email!",
+                  message: "Please input your old password!",
                 },
               ]}
             >
-              <Input />
+              <Input.Password />
             </Form.Item>
 
             <Form.Item
-              label="Password"
-              name="password"
+              label="New Password"
+              name="newPassword"
               rules={[
                 {
                   required: true,
-                  message: "Please input your password!",
+                  message: "Please input new password!",
+                },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item
+              label="Confirm Password"
+              name="confirmPassword"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input confirm password!",
                 },
               ]}
             >
@@ -110,5 +108,4 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;
+export default ChangePassword;

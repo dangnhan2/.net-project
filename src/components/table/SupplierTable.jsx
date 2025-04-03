@@ -46,13 +46,13 @@ const SupplierTable = () => {
 
   const confirm = async (record, e) => {
     let res = await deleteSupplier(record.id);
-    if (res) {
+    if (res && res.statusCode === 200) {
       message.success(res.message);
       getSuppliers();
     } else {
       notification.error({
-        message: "Có lỗi đã xảy ra",
-        description: "Xóa nhà cung cấp thất bại",
+        message: "Action Failed",
+        description: res.message,
         duration: 3,
       });
     }

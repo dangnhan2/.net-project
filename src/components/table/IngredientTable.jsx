@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import AddIngredient from "../modal/AddIngredient";
 import UpdateIngredient from "../modal/UpdateIngredient";
 import { getAllIngredients } from "../../api/api";
+import IngredientView from "../modal/view/IngridientView";
 const { Search } = Input;
 const IngredientTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataRecord, setDataRecord] = useState();
   const [ingredients, setIngredients] = useState();
   const [sort, setSort] = useState("price=DESC");
@@ -55,6 +57,11 @@ const IngredientTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Name",
@@ -141,6 +148,12 @@ const IngredientTable = () => {
         dataRecord={dataRecord}
         getIngredients={getIngredients}
       ></UpdateIngredient>
+
+      <IngredientView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></IngredientView>
     </>
   );
 };

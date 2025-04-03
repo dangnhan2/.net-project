@@ -1,26 +1,23 @@
 import { Button, Table, Input, Tag } from "antd";
-import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import { FaPencilAlt, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import AddOrder from "../modal/AddOrder";
 import UpdateOrder from "../modal/UpdateOrder";
 import { getAllOrders } from "../../api/api";
 import dayjs from "dayjs";
+import OrderView from "../modal/view/OrderView";
 const { Search } = Input;
+
 const OrderTable = () => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalView, setModalView] = useState(false);
   const [dataSort, setSort] = useState("status=DESC");
   const [dataSearch, setDataSearch] = useState();
   const [orders, setOrders] = useState();
   const [dataRecord, setDataRecord] = useState();
 
   const handleUpdate = (record) => {
-    const dishList = [
-      { id: "01", dish: "America Coffee", price: "1", quantity: 1 },
-      { id: "02", dish: "Lifton", price: "3.5", quantity: 3 },
-    ];
-
-    record.dishList = dishList;
     console.log(record);
     setModalUpdate(true);
     setDataRecord(record);
@@ -64,6 +61,11 @@ const OrderTable = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (text, record) => (
+        <a onClick={() => (setModalView(true), setDataRecord(record))}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Customer",
@@ -192,6 +194,12 @@ const OrderTable = () => {
         dataRecord={dataRecord}
         getOrders={getOrders}
       ></UpdateOrder>
+
+      <OrderView
+        modalView={modalView}
+        setModalView={setModalView}
+        dataRecord={dataRecord}
+      ></OrderView>
     </>
   );
 };

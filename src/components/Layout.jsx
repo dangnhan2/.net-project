@@ -1,15 +1,14 @@
-import { Avatar, Button, Dropdown, Layout, Menu, Space, theme } from "antd";
+import { Avatar, Button, Dropdown, Layout, Menu, Space } from "antd";
 const { Header, Sider, Content } = Layout;
 import {
   DownOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { useContext, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { FaTableCells } from "react-icons/fa6";
 import { GiKnifeFork, GiThreeLeaves } from "react-icons/gi";
 import { BiFoodMenu } from "react-icons/bi";
@@ -18,18 +17,50 @@ import { FaMoneyBillAlt } from "react-icons/fa";
 import { MdDashboard, MdOutlineGroups2 } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 import { UserContext } from "../context/Context";
+import Cookies from "js-cookie";
 
 const LayoutAdmin = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [collapsed, setCollapsed] = useState(false);
+  const [activeMenu, setActiveMenu] = useState("0");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("refreshToken");
+    navigate("/login");
+  };
+
+  // Set the active menu based on the current path
+  useEffect(() => {
+    const path = location.pathname;
+
+    // Define a mapping from paths to menu keys
+    const pathToMenuKey = {
+      "/": "0", // Dashboard
+      "/customer": "1",
+      "/supplier": "2",
+      "/table": "3",
+      "/ingredients": "4",
+      "/dish": "5",
+      "/menu": "6",
+      "/order": "7",
+      "/bill": "8",
+      "/employee": "9",
+      "/shift": "10",
+    };
+
+    // Set the active menu based on the current path
+    setActiveMenu(pathToMenuKey[path] || "0");
+  }, [location]);
 
   const items = [
     {
-      label: <a>Đổi mật khẩu</a>,
+      label: <a onClick={() => navigate("/change")}>Đổi mật khẩu</a>,
       key: "0",
     },
     {
-      label: <a>Đăng xuất</a>,
+      label: <a onClick={handleLogout}>Đăng xuất</a>,
       key: "1",
     },
   ];
@@ -54,7 +85,8 @@ const LayoutAdmin = () => {
             height: "100%",
           }}
           mode="inline"
-          defaultSelectedKeys={["0"]}
+          selectedKeys={[activeMenu]}
+          onClick={(e) => setActiveMenu(e.key)}
           items={[
             {
               key: "0",

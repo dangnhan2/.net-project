@@ -1,4 +1,4 @@
-import { Col, Row, Statistic } from "antd";
+import { Col, Divider, Row, Statistic } from "antd";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,9 +8,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
 import { getDashBoard } from "../api/api";
 ChartJS.register(
   CategoryScale,
@@ -19,7 +20,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 const Dashboard = () => {
   const [quantity, setQuantity] = useState({});
@@ -36,7 +38,40 @@ const Dashboard = () => {
     }
   };
 
-  const data = {
+  const dataOrders = {
+    labels: [
+      `Rejected(${quantity.numberOfRejectedOrders})`,
+      `Completed(${quantity.numberOfCompletedOrders})`,
+      `Pending(${quantity.numberOfPendingOrders})`,
+      `Billed(${quantity.numberOfSoldOrders})`,
+    ],
+    datasets: [
+      {
+        label: "Orders",
+        data: [
+          quantity.numberOfRejectedOrders,
+          quantity.numberOfCompletedOrders,
+          quantity.numberOfPendingOrders,
+          quantity.numberOfSoldOrders,
+        ],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(54, 162, 235, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataCustomersNOrders = {
     labels: [
       "11 Feb",
       "12 Feb",
@@ -101,49 +136,54 @@ const Dashboard = () => {
   return (
     <div>
       <Row gutter={[20, 20]}>
-        <Col span={8} className="gutter-row">
+        <Col span={14} className="gutter-row">
           <div
             style={{
-              border: "1px solid transparent",
-              borderRadius: "5px",
-              backgroundColor: "#FEFEFE",
-              padding: "50px 10px",
+              display: "flex",
+              justifyContent: "flex-start",
+              gap: "20px",
             }}
           >
-            <Statistic
-              title="Total Customers"
-              value={quantity.numberOfCustomers}
-            />
+            <div
+              style={{
+                border: "1px solid transparent",
+                borderRadius: "5px",
+                backgroundColor: "#FEFEFE",
+                padding: "50px 10px",
+                width: "500px",
+              }}
+            >
+              <Statistic
+                title="Total Customers"
+                value={quantity.numberOfCustomers}
+              />
+            </div>
+
+            <div
+              style={{
+                border: "1px solid transparent",
+                borderRadius: "5px",
+                backgroundColor: "#FEFEFE",
+                padding: "50px 10px",
+                width: "500px",
+              }}
+            >
+              <Statistic title="Total Orders" value={quantity.numberOfOrders} />
+            </div>
+
+            <div
+              style={{
+                border: "1px solid transparent",
+                borderRadius: "5px",
+                backgroundColor: "#FEFEFE",
+                padding: "50px 10px",
+                width: "500px",
+              }}
+            >
+              <Statistic title="Total Sales" value={quantity.numberOfBills} />
+            </div>
           </div>
-        </Col>
-        <Col span={8} className="gutter-row">
-          <div
-            style={{
-              border: "1px solid transparent",
-              borderRadius: "5px",
-              backgroundColor: "#FEFEFE",
-              padding: "50px 10px",
-            }}
-          >
-            <Statistic title="Total Orders" value={quantity.numberOfOrders} />
-          </div>
-        </Col>
-        <Col span={8} className="gutter-row">
-          <div
-            style={{
-              border: "1px solid transparent",
-              borderRadius: "5px",
-              backgroundColor: "#FEFEFE",
-              padding: "50px 10px",
-            }}
-          >
-            <Statistic title="Total Sales" value={quantity.numberOfBills} />
-          </div>
-        </Col>
-      </Row>
-      <div style={{ margin: "10px 0" }}></div>
-      <Row>
-        <Col span={24}>
+
           <div
             style={{
               width: "100%",
@@ -152,14 +192,28 @@ const Dashboard = () => {
               border: "1px solid transparent",
               borderRadius: "5px",
               backgroundColor: "#FEFEFE",
+              marginTop: "20px",
             }}
           >
             <h2>Orders Statistics</h2>
-            <Line data={data} options={options} />
+            <Line data={dataCustomersNOrders} options={options} />
+          </div>
+        </Col>
+        <Col span={10} className="gutter-row">
+          <div
+            style={{
+              padding: "20px",
+              backgroundColor: "#FEFEFE",
+              border: "1px solid transparent",
+              borderRadius: "5px",
+            }}
+          >
+            <h2>Orders Summary</h2>
+            <Divider></Divider>
+            <Pie data={dataOrders} />
           </div>
         </Col>
       </Row>
-      <div style={{ margin: "10px 0" }}></div>
     </div>
   );
 };

@@ -26,7 +26,6 @@ const UpdateMenu = (props) => {
         duration: 3,
       });
     }
-    // console.log("Success:", values);
   };
 
   const handleCancel = () => {
