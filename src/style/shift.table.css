@@ -17,3 +17,18 @@
 .notes-month section {
   font-size: 28px;
 }
+
+/* --- ADDED CSS FOR HOVER BUTTON --- */
+
+/* Hide the add button by default */
+.schedule-cell .add-shift-button {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+/* Show the add button when the cell (.schedule-cell) is hovered */
+.schedule-cell:hover .add-shift-button {
+  visibility: visible;
+  opacity: 1;
+}
