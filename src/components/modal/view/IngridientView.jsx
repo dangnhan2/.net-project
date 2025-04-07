@@ -47,7 +47,7 @@ const IngredientView = (props) => {
   ];
 
   return (
-    <Drawer title="Dish Details" open={modalView} onClose={onClose} width={800}>
+    <Drawer title="Ingredient Details" open={modalView} onClose={onClose} width={800}>
       <Descriptions bordered>
         <Descriptions.Item label="ID" span={3}>
           {dataRecord?.id}
@@ -70,7 +70,7 @@ const IngredientView = (props) => {
       </Descriptions>
 
       <Divider orientation="left">Supplier</Divider>
-      <Table columns={columns} dataSource={suppliers} />
+      <Table columns={columns} dataSource={suppliers} pagination={false} />
     </Drawer>
   );
 };

@@ -17,7 +17,7 @@ const AddMenu = (props) => {
     const { name, status, description } = values;
     let res = await addMenu(name, status, description, dishes);
     if (res && res.statusCode === 201) {
-      message.success(mes.message);
+      message.success(res.message);
       setDishes([]);
       setModalAdd(false);
       getMenus();
